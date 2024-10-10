@@ -7,7 +7,10 @@ fs.readFile('sample-read.txt', 'utf8', (err, data)=>{
   console.log(data);
 })
 
-let data = 'Eugene Duodu is his mentor'; 
+//here we will write a normal tasks or a synchronous tasks
+console.log('This is the normal tasks.');
+
+let data = 'Eugene Duodu is his mentor';
 
 fs.writeFile('sample-write.txt', data, 'utf8', (err)=>{
   if(err){
