@@ -98,7 +98,7 @@ const update_user =  async (id, userupdate) => {
 }
 
 
-// const change_user_name
+// const patch uset
 
 
 //export functions  to be used by main/server
