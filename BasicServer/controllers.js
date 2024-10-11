@@ -1,5 +1,7 @@
 const fs = require('fs');
 
+
+//function to add new users
 const add_new_user = (user) =>{
   fs.readFile('users.json', 'utf8', (err, data) => {
     if (err) {
@@ -27,6 +29,7 @@ const add_new_user = (user) =>{
 
 }
 
+//function to get all users
 const get_all_users = async () => {
   try{
     let data = await fs.promises.readFile('users.json', 'utf8');
@@ -36,6 +39,7 @@ const get_all_users = async () => {
   }
 }
 
+//functipn to get a specific user
 const get_user_by_id = async (id) => {
   try{
     let data = await fs.promises.readFile('users.json', 'utf8');
@@ -47,6 +51,7 @@ const get_user_by_id = async (id) => {
   }
 }
 
+//function to delete a specific user
 const delete_user = async (id) => {
   try{
     let data = await fs.promises.readFile('users.json', 'utf8');
@@ -67,17 +72,16 @@ const delete_user = async (id) => {
   }
 }
 
+//function to update user
 const update_user =  async (id, userupdate) => {
   try{
     let data = await fs.promises.readFile('users.json', 'utf8');
     let users = await JSON.parse(data);
 
-    let user = users.find(user => user.id === id);
-    if(user){
-      user = userupdate
-      users = users.filter(user => user.id !== id);
+    let user = users.findIndex(user => user.id === id);
 
-      users.push(user);
+    if(user !== -1){
+      users[user] = { ...users[user], ...userupdate };
 
       fs.writeFile('users.json', JSON.stringify(users), (err)=>{
         if (err) return 'failed';
@@ -96,6 +100,8 @@ const update_user =  async (id, userupdate) => {
 
 // const change_user_name
 
+
+//export functions  to be used by main/server
 module.exports = {
   add_new_user,
   get_all_users,

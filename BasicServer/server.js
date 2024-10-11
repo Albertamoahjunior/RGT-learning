@@ -16,7 +16,7 @@ const server = http.createServer(async (req, res) => {
 
   //add new users
   if (req.method === 'POST' && req.url === '/add-user') {
-    let body = '';
+    var body = '';
 
     req.on('data', data => {
       body += data;
@@ -74,9 +74,9 @@ const server = http.createServer(async (req, res) => {
         res.writeHead(500, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: 'Internal Server Error' }));
     }
-
+  }
   //delete a user id
-  }else if(req.method === 'DELETE' && pathname === '/user'){
+  else if(req.method === 'DELETE' && pathname === '/user'){
       let id = query.id;
 
       // Check if the id is provided
@@ -96,6 +96,28 @@ const server = http.createServer(async (req, res) => {
       }
 
   }
+
+  //update specific user
+  else if(req.method === 'PUT' && pathname === '/update-user'){
+    let id = query.id;
+    var update = '';
+
+    req.on('data', data =>{
+      update += data;
+    });
+
+    req.on('end', async ()=>{
+      try {
+        const user_update = await update_user(id, JSON.parse(update));
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ message: user_update }));
+      } catch (error) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ message: 'Invalid JSON or Error adding user', error }));
+      }
+    })
+  }
+
 
   //default when cannot recognize path
   else {
