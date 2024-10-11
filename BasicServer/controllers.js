@@ -67,8 +67,33 @@ const delete_user = async (id) => {
   }
 }
 
-// const change_user_age
-//
+const update_user =  async (id, userupdate) => {
+  try{
+    let data = await fs.promises.readFile('users.json', 'utf8');
+    let users = await JSON.parse(data);
+
+    let user = users.find(user => user.id === id);
+    if(user){
+      user = userupdate
+      users = users.filter(user => user.id !== id);
+
+      users.push(user);
+
+      fs.writeFile('users.json', JSON.stringify(users), (err)=>{
+        if (err) return 'failed';
+      });
+      return 'success';
+    }else{
+      return 'no such user';
+    }
+
+
+  }catch(e){
+    throw new Error(e);
+  }
+}
+
+
 // const change_user_name
 
 module.exports = {
@@ -76,6 +101,6 @@ module.exports = {
   get_all_users,
   delete_user,
   get_user_by_id,
-  //change_user_age,
+  update_user,
   //change_user_name
 }

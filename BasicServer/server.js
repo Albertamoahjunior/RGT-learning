@@ -1,7 +1,7 @@
 const http = require('http');
 const url = require('url');
 const cors = require('cors');
-const{add_new_user, get_all_users, get_user_by_id, delete_user} = require('./controllers.js');
+const{add_new_user, get_all_users, get_user_by_id, delete_user, update_user} = require('./controllers.js');
 
 
 const server = http.createServer(async (req, res) => {
@@ -13,6 +13,8 @@ const server = http.createServer(async (req, res) => {
   const pathname = parsedUrl.pathname;
   const query = parsedUrl.query;
 
+
+  //add new users
   if (req.method === 'POST' && req.url === '/add-user') {
     let body = '';
 
@@ -32,6 +34,8 @@ const server = http.createServer(async (req, res) => {
       }
     });
   }
+
+  //get all users
   else if (req.method === 'GET' && req.url === '/users') {
     try {
       const users = await get_all_users(); // Now await works properly
@@ -42,6 +46,8 @@ const server = http.createServer(async (req, res) => {
       res.end(JSON.stringify({ message: 'Error retrieving users', error }));
     }
   }
+
+  //get a single uset
   else if (req.method === 'GET' && pathname === '/user') {
     let id = query.id;
 
@@ -68,26 +74,30 @@ const server = http.createServer(async (req, res) => {
         res.writeHead(500, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: 'Internal Server Error' }));
     }
-}else if(req.method === 'DELETE' && pathname === '/user'){
-  let id = query.id;
 
-  // Check if the id is provided
-  if (!id) {
-      res.writeHead(400, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'User ID is required' }));
-      return;
+  //delete a user id
+  }else if(req.method === 'DELETE' && pathname === '/user'){
+      let id = query.id;
+
+      // Check if the id is provided
+      if (!id) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'User ID is required' }));
+          return;
+      }
+
+      try{
+          let status = await delete_user(id);
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({message: status}));
+      }catch(e){
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Internal Server Error' }));
+      }
+
   }
 
-  try{
-      let status = await delete_user(id);
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({message: status}));
-  }catch(e){
-    res.writeHead(500, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ error: 'Internal Server Error' }));
-  }
-
-}
+  //default when cannot recognize path
   else {
     res.writeHead(404, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ message: 'Route not found' }));
