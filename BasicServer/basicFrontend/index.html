@@ -216,6 +216,7 @@
                 [choice]: value
               };
 
+              console.log(field)
               // Make the PATCH request
               const response = await axios.patch(`http://localhost:2000/patch-user?id=${id}&field=${choice}`, field);
 

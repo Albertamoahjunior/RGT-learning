@@ -7,7 +7,7 @@ const{add_new_user, get_all_users, get_user_by_id, delete_user, update_user} = r
 const server = http.createServer(async (req, res) => {
   const allowed = 'localhost' || '127.0.0.1'
 
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', allowed);
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE', 'PATCH');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
