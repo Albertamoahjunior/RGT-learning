@@ -5,9 +5,18 @@ const{add_new_user, get_all_users, get_user_by_id, delete_user, update_user} = r
 
 
 const server = http.createServer(async (req, res) => {
-  const allowed = 'localhost' || '1277.0.0.1'
+  const allowed = 'localhost' || '127.0.0.1'
 
-  res.setHeader('Access-Control-Allowed-Origin', allowed);
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE', 'PATCH');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  // Handle OPTIONS preflight request
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204);
+    res.end();
+    return;
+  }
 
   const parsedUrl = url.parse(req.url, true);
   const pathname = parsedUrl.pathname;
@@ -151,6 +160,6 @@ const server = http.createServer(async (req, res) => {
 
 
 //start server on the specified port 5000
-server.listen(5000, ()=>{
+server.listen(2000, ()=>{
   console.log('Server running on port 5000');
 })

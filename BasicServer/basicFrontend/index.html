@@ -1,42 +1,27 @@
 <!DOCTYPE html>
 <html lang='en'>
   <head>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <title>Test Site</title>
     <style>
       .left-pane{
         position: absolute;
         width: 50%;
         float: left;
-        background-color: #f3f3f3
+        background-color: #f3f3f3;
       }
       .right-pane{
         position: absolute;
-        width: 50%;
-        float: right;
+        width: 45%;
+        top: 0;
+        right: 0;
       }
     </style>
-    <script type="text/javascript">
-        const displayUsers = async () = > {
-
-        }
-        const displayUser = async () = > {
-
-        }
-        const updateUser = async () = > {
-
-        }
-        const editUser  = async () = > {
-
-        }
-        const deleteUser = async  () = > {
-
-        }
-    </script>
   </head>
   <body>
     <div class="left-pane">
       <h2>Add User</h2>
-      <form>
+      <form onsubmit="event.preventDefault();">
           <label for="id">ID</label>
           <br>
           <input type="text" name="id" value="">
@@ -53,32 +38,25 @@
       </form>
 
       <h2>Find User</h2>
-      <form>
+      <form onsubmit="event.preventDefault();">
           <label for="id">ID</label>
           <br>
-          <input type="text" name="id" value="">
+          <input id="user" type="text" name="id" value="">
         <br>
-        <button onclick="">Find User</button>
+        <button onclick="displayUser()">Find User</button>
       </form>
 
       <h2>Delete User</h2>
-      <form>
-          <label for="id">ID</label>  <h2>Find User</h2>
-      <form>
+      <form onsubmit="event.preventDefault();">
           <label for="id">ID</label>
           <br>
-          <input type="text" name="id" value="">
-        <br>
-        <button onclick="">Find User</button>
-      </form>
-          <br>
-          <input type="text" name="id" value="">
-        <br>
-        <button onclick="">Delete User</button>
+          <input id="del" type="text" name="id" value="">
+            <br>
+        <button onclick="deleteUser()">Delete User</button>
       </form>
 
       <h2>Update User</h2>
-      <form>
+      <form onsubmit="event.preventDefault();">
           <label for="id">ID</label>
           <br>
           <input type="text" name="id" value="">
@@ -95,7 +73,7 @@
       </form>
 
       <h2>Edit User Infornation</h2>
-      <form>
+      <form onsubmit="event.preventDefault();">
           <label for="id">ID</label>
           <br>
           <input type="text" name="id" value="">
@@ -115,10 +93,87 @@
       </form>
 
       <h3>See all users</h3>
-      <button onclick="">all users</button>
+      <button onclick="displayUsers()">all users</button>
     </div>
     <div class="right-pane">
-
+      <h1 style='margin:5%' >Results</h1>
     </div>
+
+    <script type="text/javascript">
+      const displayUsers = async () => {
+            try {
+                // Make GET request using axios
+                let response = await axios.get('http://localhost:2000/users');
+
+                // The data is already parsed as JSON in axios
+                let users = response.data.users;
+                let display = document.querySelector('.right-pane');
+
+                // Clear previous content (if necessary)
+                display.innerHTML = "<h1 style='margin:5%' >Results</h1>";
+
+                // Append each user's information
+                users.forEach((user) => {
+                    display.innerHTML += `<p>id: ${user.id} name: ${user.name} age: ${user.age}</p>`;
+                });
+            } catch (error) {
+                console.error('Error fetching users:', error);
+            }
+        }
+
+
+        const displayUser = async () => {
+          let id = document.getElementById('user').value;
+          try {
+              // Make GET request using axios
+              let response = await axios.get(`http://localhost:2000/user?id=${id}`);
+
+              // The data is already parsed as JSON in axios
+              let user = response.data;
+              let display = document.querySelector('.right-pane');
+
+              // Preset content
+              display.innerHTML = "<h1 style='margin:5%' >Results</h1>";
+
+              // Append user's information
+              display.innerHTML += `<p>id: ${user.id} name: ${user.name} age: ${user.age}</p>`;
+          } catch (error) {
+              console.error('Error fetching users:', error);
+          }
+        }
+
+        const addUser = async () => {
+
+        }
+
+        const updateUser = async () => {
+
+        }
+
+        const editUser  = async () => {
+
+        }
+
+        const deleteUser = async  () => {
+          let id = document.getElementById('del').value;
+          try {
+              // Make GET request using axios
+              let response = await axios.delete(`http://localhost:2000/user?id=${id}`);
+
+              // The data is already parsed as JSON in axios
+              let user = response.data.message;
+              console.log(user)
+              let display = document.querySelector('.right-pane');
+
+              // Preset content
+              display.innerHTML = "<h1 style='margin:5%' >Results</h1>";
+
+              // Append user's information
+              display.innerHTML += `<p>${user}</p>`;
+          } catch (error) {
+              console.error('Error fetching users:', error);
+          }
+        }
+    </script>
   </body>
 </html>
