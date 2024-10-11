@@ -24,17 +24,17 @@
       <form onsubmit="event.preventDefault();">
           <label for="id">ID</label>
           <br>
-          <input type="text" name="id" value="">
+          <input  id="id" type="text" name="id" value="">
           <br>
           <label for="name">Enter Name</label>
           <br>
-        <input type="text" name="name" value="">
+        <input id="name" type="text" name="name" value="">
         <br>
         <label for="age">Enter age:</label>
         <br>
-        <input type="text" name="age" value="">
+        <input id= "age" type="text" name="age" value="">
         <br>
-        <button onclick="">Add User</button>
+        <button onclick="addUser()">Add User</button>
       </form>
 
       <h2>Find User</h2>
@@ -59,37 +59,37 @@
       <form onsubmit="event.preventDefault();">
           <label for="id">ID</label>
           <br>
-          <input type="text" name="id" value="">
+          <input id="new-id" type="text" name="id" value="">
           <br>
           <label for="name">Enter Name</label>
           <br>
-        <input type="text" name="name" value="">
+        <input id="new-name" type="text" name="name" value="">
         <br>
         <label for="age">Enter age:</label>
         <br>
-        <input type="text" name="age" value="">
+        <input id="new-age" type="text" name="age" value="">
         <br>
-        <button onclick="">Update User</button>
+        <button onclick="updateUser()">Update User</button>
       </form>
 
       <h2>Edit User Infornation</h2>
       <form onsubmit="event.preventDefault();">
           <label for="id">ID</label>
           <br>
-          <input type="text" name="id" value="">
+          <input id="user-id-choice" type="text" name="id" value="">
           <br>
           <label for="name">Select field</label>
           <br>
-        <select class="" name="field">
+        <select id="choice" class="" name="field">
           <option value="name">name</option>
           <<option value="age">age</option>
         </select>
         <br>
-        <label for="age">Enter preferred value:</label>
+        <label for="value">Enter preferred value:</label>
         <br>
-        <input type="text" name="field" value="">
+        <input id="value" type="text" name="field" value="">
         <br>
-        <button onclick="">Edit</button>
+        <button onclick="editUser()">Edit</button>
       </form>
 
       <h3>See all users</h3>
@@ -143,16 +143,96 @@
         }
 
         const addUser = async () => {
+          let id = document.getElementById('id').value;
+          let name = document.getElementById('name').value;
+          let age = document.getElementById('age').value;
 
+          try {
+                // Define the data to be sent in the request body
+                const newUser = {
+                    id: id,
+                    name: name,
+                    age: age
+                };
+
+                // Make the POST request
+                const response = await axios.post('http://localhost:2000/add-user', newUser);
+
+
+                let display = document.querySelector('.right-pane');
+                // Preset content
+                display.innerHTML = "<h1 style='margin:5%' >Results</h1>";
+
+                // Append user's information
+                display.innerHTML += `<p> user created </p>`;
+            } catch (error) {
+                // Preset content
+                display.innerHTML = "<h1 style='margin:5%' >Results</h1>";
+
+                // Append user's information
+                display.innerHTML += `<p> Error </p>`;
+            }
         }
 
         const updateUser = async () => {
+            let id = document.getElementById('new-id').value;
+            let name = document.getElementById('new-name').value;
+            let age = document.getElementById('new-age').value;
 
+            try {
+                // Define the data to be sent in the request body
+                const newUser = {
+                    id: id,
+                    name: name,
+                    age: age
+                };
+
+                // Make the PUT request
+                const response = await axios.put(`http://localhost:2000/update-user?id=${id}`, newUser);
+
+                // Log the response
+                console.log();
+
+
+                let display = document.querySelector('.right-pane');
+                // Preset content
+                display.innerHTML = "<h1 style='margin:5%' >Results</h1>";
+
+                // Append user's information
+                display.innerHTML += `<p>'User updated:', ${response.data.message} </p>`;
+            } catch (error) {
+                console.error('Error updating user:', error);
+            }
         }
 
         const editUser  = async () => {
+          let id = document.getElementById('user-id-choice').value;
+          let choice = document.getElementById('choice').value;
+          let value = document.getElementById('value').value;
 
+          try {
+              // Define the data to be sent in the request body
+              const field = {
+                [choice]: value
+              };
+
+              // Make the PATCH request
+              const response = await axios.patch(`http://localhost:2000/patch-user?id=${id}&field=${choice}`, field);
+
+              // Log the response
+              console.log();
+
+
+              let display = document.querySelector('.right-pane');
+              // Preset content
+              display.innerHTML = "<h1 style='margin:5%' >Results</h1>";
+
+              // Append user's information
+              display.innerHTML += `<p>'User data edited:', ${response.data.message} </p>`;
+          } catch (error) {
+              console.error('Error editing user:', error);
         }
+      }
 
         const deleteUser = async  () => {
           let id = document.getElementById('del').value;
