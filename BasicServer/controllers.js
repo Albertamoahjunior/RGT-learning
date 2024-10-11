@@ -12,6 +12,12 @@ const add_new_user = (user) =>{
   }
   let users = [];
   users = JSON.parse(data);
+
+
+  if(users.find(exist => exist.id === user.id)){
+    return 'user already exist';
+  }
+
   users.push(user);
     fs.writeFile('users.json', JSON.stringify(users), (err)=>{
       if (err) return 'failed';
@@ -46,7 +52,16 @@ const delete_user = async (id) => {
     let data = await fs.promises.readFile('users.json', 'utf8');
     let users = await JSON.parse(data);
 
-    console.log(users);
+    users = users.filter(user => user.id !== id);
+    if(users){
+      fs.writeFile('users.json', JSON.stringify(users), (err)=>{
+        if (err) return 'failed';
+      });
+      return 'success';
+    }else{
+      return 'no such user'
+    }
+
   }catch(e){
     throw new Error(e);
   }

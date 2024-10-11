@@ -1,9 +1,14 @@
 const http = require('http');
 const url = require('url');
+const cors = require('cors');
 const{add_new_user, get_all_users, get_user_by_id, delete_user} = require('./controllers.js');
 
 
 const server = http.createServer(async (req, res) => {
+  const allowed = 'localhost' || '1277.0.0.1'
+
+  res.setHeader('Access-Control-Allowed-Origin', allowed);
+
   const parsedUrl = url.parse(req.url, true);
   const pathname = parsedUrl.pathname;
   const query = parsedUrl.query;
@@ -74,7 +79,12 @@ const server = http.createServer(async (req, res) => {
   }
 
   try{
-
+      let status = await delete_user(id);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({message: status}));
+  }catch(e){
+    res.writeHead(500, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Internal Server Error' }));
   }
 
 }
@@ -85,9 +95,7 @@ const server = http.createServer(async (req, res) => {
 });
 
 
-
-
-
+//start server on the specified port 5000
 server.listen(5000, ()=>{
   console.log('Server running on port 5000');
 })
