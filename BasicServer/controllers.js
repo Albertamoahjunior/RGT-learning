@@ -97,8 +97,29 @@ const update_user =  async (id, userupdate) => {
   }
 }
 
+//function to patch user
+const patch_user = async (id, patch, field) =>{
+  try{
+    let data = await fs.promises.readFile('users.json', 'utf8');
+    let users = await JSON.parse(data);
 
-// const patch uset
+    let user = users.findIndex(user => user.id === id);
+
+    if(user !== -1){
+      users[user].field = patch.field;
+      fs.writeFile('users.json', JSON.stringify(users), (err)=>{
+        if (err) return 'failed';
+      });
+      return 'success';
+    }else{
+      return 'no such user';
+    }
+
+
+  }catch(e){
+    throw new Error(e);
+  }
+}
 
 
 //export functions  to be used by main/server
@@ -108,5 +129,5 @@ module.exports = {
   delete_user,
   get_user_by_id,
   update_user,
-  //change_user_name
+  patch_user
 }

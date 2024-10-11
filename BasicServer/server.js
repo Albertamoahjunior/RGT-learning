@@ -118,6 +118,29 @@ const server = http.createServer(async (req, res) => {
     })
   }
 
+  //patch user
+  //update specific user
+  else if(req.method === 'PATCH' && pathname === '/patch-user'){
+    let id = query.id;
+    let field = query.field;
+
+    var patch = '';
+
+    req.on('data', data =>{
+      patch += data;
+    });
+
+    req.on('end', async ()=>{
+      try {
+        const user_patch = await update_user(id, JSON.parse(patch), field);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ message: user_patch }));
+      } catch (error) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ message: 'Invalid JSON or Error adding user', error }));
+      }
+    })
+  }
 
   //default when cannot recognize path
   else {
