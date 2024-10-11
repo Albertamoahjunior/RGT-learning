@@ -2,72 +2,123 @@
 <html lang='en'>
   <head>
     <title>Test Site</title>
+    <style>
+      .left-pane{
+        position: absolute;
+        width: 50%;
+        float: left;
+        background-color: #f3f3f3
+      }
+      .right-pane{
+        position: absolute;
+        width: 50%;
+        float: right;
+      }
+    </style>
+    <script type="text/javascript">
+        const displayUsers = async () = > {
+
+        }
+        const displayUser = async () = > {
+
+        }
+        const updateUser = async () = > {
+
+        }
+        const editUser  = async () = > {
+
+        }
+        const deleteUser = async  () = > {
+
+        }
+    </script>
   </head>
   <body>
-    <h2>Add User</h2>
-    <form>
-        <label for="id">ID</label>
+    <div class="left-pane">
+      <h2>Add User</h2>
+      <form>
+          <label for="id">ID</label>
+          <br>
+          <input type="text" name="id" value="">
+          <br>
+          <label for="name">Enter Name</label>
+          <br>
+        <input type="text" name="name" value="">
         <br>
-        <input type="text" name="id" value="">
+        <label for="age">Enter age:</label>
         <br>
-        <label for="name">Enter Name</label>
+        <input type="text" name="age" value="">
         <br>
-      <input type="text" name="name" value="">
-      <br>
-      <label for="age">Enter age:</label>
-      <br>
-      <input type="text" name="age" value="">
-      <br>
-      <button onclick="">Add User</button>
-    </form>
+        <button onclick="">Add User</button>
+      </form>
 
-    <h2>Find User</h2>
-    <form>
-        <label for="id">ID</label>
+      <h2>Find User</h2>
+      <form>
+          <label for="id">ID</label>
+          <br>
+          <input type="text" name="id" value="">
         <br>
-        <input type="text" name="id" value="">
-      <br>
-      <button onclick="">Find User</button>
-    </form>
+        <button onclick="">Find User</button>
+      </form>
 
-    <h2>Update User</h2>
-    <form>
-        <label for="id">ID</label>
+      <h2>Delete User</h2>
+      <form>
+          <label for="id">ID</label>  <h2>Find User</h2>
+      <form>
+          <label for="id">ID</label>
+          <br>
+          <input type="text" name="id" value="">
         <br>
-        <input type="text" name="id" value="">
+        <button onclick="">Find User</button>
+      </form>
+          <br>
+          <input type="text" name="id" value="">
         <br>
-        <label for="name">Enter Name</label>
-        <br>
-      <input type="text" name="name" value="">
-      <br>
-      <label for="age">Enter age:</label>
-      <br>
-      <input type="text" name="age" value="">
-      <br>
-      <button onclick="">Update User</button>
-    </form>
+        <button onclick="">Delete User</button>
+      </form>
 
-    <h2>Edit User Infornation</h2>
-    <form>
-        <label for="id">ID</label>
+      <h2>Update User</h2>
+      <form>
+          <label for="id">ID</label>
+          <br>
+          <input type="text" name="id" value="">
+          <br>
+          <label for="name">Enter Name</label>
+          <br>
+        <input type="text" name="name" value="">
         <br>
-        <input type="text" name="id" value="">
+        <label for="age">Enter age:</label>
         <br>
-        <label for="name">Select field</label>
+        <input type="text" name="age" value="">
         <br>
-      <select class="" name="field">
-        <option value="name">name</option>
-        <<option value="age">age</option>
-      </select>
-      <br>
-      <label for="age">Enter preferred value:</label>
-      <br>
-      <input type="text" name="field" value="">
-      <br>
-      <button onclick="">Edit</button>
-    </form>
+        <button onclick="">Update User</button>
+      </form>
 
-    <h3>See all users</h3>
-    <button onclick="">all users</button>
+      <h2>Edit User Infornation</h2>
+      <form>
+          <label for="id">ID</label>
+          <br>
+          <input type="text" name="id" value="">
+          <br>
+          <label for="name">Select field</label>
+          <br>
+        <select class="" name="field">
+          <option value="name">name</option>
+          <<option value="age">age</option>
+        </select>
+        <br>
+        <label for="age">Enter preferred value:</label>
+        <br>
+        <input type="text" name="field" value="">
+        <br>
+        <button onclick="">Edit</button>
+      </form>
+
+      <h3>See all users</h3>
+      <button onclick="">all users</button>
+    </div>
+    <div class="right-pane">
+
+    </div>
   </body>
 </html>
