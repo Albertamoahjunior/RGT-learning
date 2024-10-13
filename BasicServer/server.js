@@ -5,7 +5,7 @@ const{add_new_user, get_all_users, get_user_by_id, delete_user, update_user} = r
 
 
 const server = http.createServer(async (req, res) => {
-  const allowed = 'localhost' || '127.0.0.1'
+  const allowed = 'http://127.0.0.1:8080'
 
   res.setHeader('Access-Control-Allow-Origin', allowed);
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE', 'PATCH');
@@ -158,8 +158,9 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
+const PORT = 2000;
 
 //start server on the specified port 5000
-server.listen(2000, ()=>{
-  console.log('Server running on port 5000');
+server.listen(PORT, ()=>{
+  console.log(`Server running on port ${PORT}`);
 })
