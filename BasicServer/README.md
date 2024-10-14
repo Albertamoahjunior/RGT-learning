@@ -29,7 +29,7 @@ the route : /patch-user?id={}&field={}\
 usage: the id query takes id of the user and the field takes the name of the particular field you want to edit.
 
 #### OPTIONS
-
+The OPTIONS method is also used to determine what options of methods are allowed for cross origin requests. In the options we defined what origin is allowed(localhost:8080) and the methods allowed that is all methods because we are testing on all of them
 
 #### Usage:
 Details of usage are presented in the basicFrontend sub directory where api calls are made in the main.js file and the results are displayed by the simple HTML page.
