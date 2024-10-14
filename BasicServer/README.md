@@ -7,7 +7,7 @@ In this project file operations are explored. JSON  was used to mimic a database
 
 HTTP nethods are also explored.
 The methods explored are:
-*GET*
+### GET
 The GET method is used twice: getting all users and getting specific user.
 Getting a specific user : /user?id={id}
 Getting all users : /users
