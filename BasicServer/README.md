@@ -32,7 +32,7 @@ usage: the id query takes id of the user and the field takes the name of the par
 
 
 #### Usage:
-Details of usage are presented in the basic frontend directory where api calls are made in the main.js file and the results are displayed by the simple HTML page.
+Details of usage are presented in the ./basicFrontend sub directory where api calls are made in the main.js file and the results are displayed by the simple HTML page.
 
 ### CORS
 CORS is also explored in this simple project. CORS is used to manage access to the backend. This is done based on Origin and methods.\
