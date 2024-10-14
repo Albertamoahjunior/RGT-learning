@@ -8,7 +8,7 @@ const server = http.createServer(async (req, res) => {
   const allowed = 'http://127.0.0.1:8080'
 
   res.setHeader('Access-Control-Allow-Origin', allowed);
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE', 'PATCH');
+  res.setHeader('Access-Control-Allow-Methods', '*');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   // Handle OPTIONS preflight request

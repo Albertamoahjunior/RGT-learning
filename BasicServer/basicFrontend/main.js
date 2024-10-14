@@ -1,3 +1,4 @@
+//function to fetch all users
 const displayUsers = async () => {
       try {
           // Make GET request using axios
@@ -19,7 +20,7 @@ const displayUsers = async () => {
       }
   }
 
-
+//function to fetch a particular user
   const displayUser = async () => {
     let id = document.getElementById('user').value;
     try {
@@ -40,6 +41,8 @@ const displayUsers = async () => {
     }
   }
 
+
+//function to add a new user
   const addUser = async () => {
     let id = document.getElementById('id').value;
     let name = document.getElementById('name').value;
@@ -72,6 +75,8 @@ const displayUsers = async () => {
       }
   }
 
+
+//function to a user's information
   const updateUser = async () => {
       let id = document.getElementById('new-id').value;
       let name = document.getElementById('new-name').value;
@@ -103,6 +108,8 @@ const displayUsers = async () => {
       }
   }
 
+
+//function to edit part of user's information
   const editUser  = async () => {
     let id = document.getElementById('user-id-choice').value;
     let choice = document.getElementById('choice').value;
@@ -117,6 +124,7 @@ const displayUsers = async () => {
          [choice]: value
        }
 
+        console.log(field);
          const response = await fetch(url, {
              method: 'PATCH', // Use the PATCH method
              headers: {
@@ -137,6 +145,8 @@ const displayUsers = async () => {
      }
    }
 
+
+//function to delete a specific user
   const deleteUser = async  () => {
     let id = document.getElementById('del').value;
     try {
