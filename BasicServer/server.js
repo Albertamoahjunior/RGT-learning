@@ -3,7 +3,7 @@ const url = require('url');
 const cors = require('cors');
 const{add_new_user, get_all_users, get_user_by_id, delete_user, update_user} = require('./controllers.js');
 
-
+//create server with the http module
 const server = http.createServer(async (req, res) => {
   const allowed = 'http://127.0.0.1:8080'
 
@@ -128,7 +128,6 @@ const server = http.createServer(async (req, res) => {
   }
 
   //patch user
-  //update specific user
   else if(req.method === 'PATCH' && pathname === '/patch-user'){
     let id = query.id;
     let field = query.field;
