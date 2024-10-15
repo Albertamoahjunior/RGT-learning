@@ -1,7 +1,7 @@
 const http = require('http');
 const url = require('url');
 const cors = require('cors');
-const{add_new_user, get_all_users, get_user_by_id, delete_user, update_user} = require('./controllers.js');
+const{add_new_user, get_all_users, get_user_by_id, delete_user, update_user, patch_user} = require('./controllers.js');
 
 //create server with the http module
 const server = http.createServer(async (req, res) => {
@@ -56,7 +56,7 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
-  //get a single uset
+  //get a single user
   else if (req.method === 'GET' && pathname === '/user') {
     let id = query.id;
 
