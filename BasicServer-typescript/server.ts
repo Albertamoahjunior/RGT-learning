@@ -1,5 +1,5 @@
 import express from 'express';
-import router from './routes'
+import router from './src/routes'
 import cors from 'cors';
 
 //initialize the express app and port number
