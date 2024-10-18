@@ -179,7 +179,7 @@ async function edit_user(req: Request, res: Response): Promise<void> {
   return; // Ensure the function exits
 }
 
-
+//export all functions to be used throughout the file
 export default{
   get_all_users,
   get_user,
