@@ -1,7 +1,7 @@
 # Simple Web Server Using TypeScript
 
 
-##Usage:
+## Usage:
 1. $ npm install typescript
 
 ## Parts of this progject
