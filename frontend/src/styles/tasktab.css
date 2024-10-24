@@ -1,0 +1,30 @@
+.task-tab{
+  border-radius: 0.5rem;
+  border: 0.1rem solid black;
+  height: 20rem;
+  width: 20rem;
+  box-sizing: border-box;
+  margin: 2%;
+}
+
+.desc-area{
+  height: 50%;
+  width: 90%;
+  margin-left: 5%;
+  overflow-y: auto;
+}
+
+.edit-button{
+  float: right;
+  margin : 2%;
+}
+
+.comp-button{
+  float: left;
+  margin: 1%;
+}
+
+.del-button{
+  float: right;
+  margin: 2%;
+}

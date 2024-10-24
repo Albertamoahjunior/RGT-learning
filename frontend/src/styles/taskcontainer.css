@@ -1,0 +1,9 @@
+.task-container{
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  height: 80%;
+  width: 80%;
+  border: 0;
+  background-color: #f3f3f3;
+}
