@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import EditTask from "./edittask";
 import NewTask from './newtask';
 import { Task } from '../models/task';
@@ -20,6 +20,7 @@ const TaskContainer: React.FC = () => {
   const [editVisibility, setEditVisibility] = useState<boolean>(false);
   const [prevTask, setPrevTask] = useState<Task>(dummy);
 
+
   const handleAddTask = (newTask: Task) => {
     setTasks(prevTasks => [...prevTasks, newTask]); // Add the new task to the list
   };
@@ -30,7 +31,7 @@ const TaskContainer: React.FC = () => {
   }
 
   const handleEditTask = (task: Task) => {
-    setTasks(prevTasks => prevTasks.filter(task => task.id !== task.id));
+    setTasks(prevTasks => prevTasks.filter(old_task => old_task.id !== task.id));
 
     setTasks(prevTasks => [...prevTasks, task]);
   }
@@ -41,11 +42,15 @@ const TaskContainer: React.FC = () => {
 
   return (
     <div className='task-container'>
-      <h1>Task List</h1>
-      <button onClick={()=> setVisibility(true)}>Add New Task</button>
-      {tasks.map(task => <TaskTab task={task} key={task.id} onDelete={deleteTask} onEdit={setUpEdit}/>)}
-      <NewTask isVisible={visibility} onAddTask={handleAddTask} setVisible={setVisibility}/>
-      <EditTask isVisible={editVisibility} onEditTask={handleEditTask} setVisible={setEditVisibility} prevTask={prevTask}/>
+        <div className='top-bar'>
+          <h1>Task List</h1>
+          <button onClick={()=> setVisibility(true)}>Add New Task</button>
+        </div>
+        <div className='content'>
+          {tasks.map(task => <TaskTab task={task} key={task.id} onDelete={deleteTask} onEdit={setUpEdit}/>)}
+          <NewTask isVisible={visibility} onAddTask={handleAddTask} setVisible={setVisibility} taskNumber={tasks.length + 1}/>
+          {editVisibility && <EditTask isVisible={editVisibility} onEditTask={handleEditTask} setVisible={setEditVisibility} prevTask={prevTask}/>}
+        </div>
     </div>
   );
 }

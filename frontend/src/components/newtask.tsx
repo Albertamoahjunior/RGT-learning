@@ -7,9 +7,10 @@ interface NewTaskProps {
   onAddTask: (task: Task) => void;  // Callback to send task outside the component
   isVisible: boolean;
   setVisible: (isVisible:boolean) => void;
+  taskNumber: number;
 }
 
-const NewTask: React.FC<NewTaskProps> = ({ onAddTask, isVisible, setVisible }) => {
+const NewTask: React.FC<NewTaskProps> = ({ onAddTask, isVisible, setVisible, taskNumber }) => {
   const [title, setTitle] = useState<string>('');
   const [task, setTask] = useState<string>('');
 
@@ -18,7 +19,7 @@ const NewTask: React.FC<NewTaskProps> = ({ onAddTask, isVisible, setVisible }) =
     title: title,
     task: task,
     date: new Date().toLocaleDateString(),
-    id: Math.random(),
+    id: taskNumber,
     complete: false,
   };
 
