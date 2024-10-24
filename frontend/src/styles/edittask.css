@@ -1,0 +1,21 @@
+.component{
+  display: none;
+  width: 30%;
+  background-color: blue;
+  box-sizing: border-box;
+}
+
+input{
+  width: 80%;
+  margin: 1%;
+}
+
+.component button{
+  width: 80%;
+  margin: 1%;
+}
+
+.visible{
+  display: block;
+  z-index: 100;
+}
