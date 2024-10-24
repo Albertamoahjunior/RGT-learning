@@ -27,7 +27,6 @@ const TaskContainer: React.FC = () => {
   const setUpEdit = (task: Task) =>{
     setPrevTask(task);
     setEditVisibility(true);
-    //console.log(task)
   }
 
   const handleEditTask = (editedTask: Task) =>{
