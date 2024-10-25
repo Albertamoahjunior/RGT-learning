@@ -91,7 +91,7 @@ const TaskContainer: React.FC = () => {
           <button onClick={()=> setVisibility(true)}>Add New Task</button>
         </div>
         <div className='content'>
-          {tasks.map(task => <TaskTab task={task} key={task.id} onDelete={deleteTask} onEdit={setUpEdit}/>)}
+          {tasks.map((task:any, index:any) => <TaskTab task={task} key={task.id || index} onDelete={deleteTask} onEdit={setUpEdit}/>)}
           <NewTask isVisible={visibility} onAddTask={handleAddTask} setVisible={setVisibility} taskNumber={Math.round(Math.random())}/>
           {editVisibility && <EditTask isVisible={editVisibility} onEditTask={handleEditTask} setVisible={setEditVisibility} prevTask={prevTask}/>}
         </div>
