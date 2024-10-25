@@ -1,25 +1,25 @@
 import React, { useState } from "react";
 import { Task } from "../models/task";
-import '../styles/newtask.css';
+import '../styles/edittask.css';
 
 // Define the interface for  a call back function
-interface NewTaskProps {
-  onAddTask: (task: Task) => void;  // Callback to send task outside the component
+interface EditTaskProps {
+  onEditTask: (task: Task) => void;  // Callback to send task outside the component
   isVisible: boolean;
   setVisible: (isVisible:boolean) => void;
-  taskNumber: number;
+  prevTask: Task;
 }
 
-const NewTask: React.FC<NewTaskProps> = ({ onAddTask, isVisible, setVisible, taskNumber }) => {
-  const [title, setTitle] = useState<string>('');
-  const [task, setTask] = useState<string>('');
+const EditTask: React.FC<EditTaskProps> = ({ onEditTask, isVisible, setVisible, prevTask }) => {
+  const [title, setTitle] = useState<string>(prevTask.title);
+  const [task, setTask] = useState<string>(prevTask.task);
 
   // Create the new_task object
   const new_task: Task = {
     title: title,
     task: task,
-    date: new Date().toLocaleDateString(),
-    id: taskNumber,
+    date: prevTask.date,
+    id: prevTask.id,
     complete: false,
   };
 
@@ -27,9 +27,9 @@ const NewTask: React.FC<NewTaskProps> = ({ onAddTask, isVisible, setVisible, tas
     if(title === ' ' || task === ''){
       alert('empty fields');
     }else{
-      onAddTask(new_task); // Send the new_task to the parent component
-      setTitle(''); // Clear the input fields after submitting
-      setTask('');
+      onEditTask(new_task); // Send the new_task to the parent component
+      setTitle(prevTask.title); // Clear the input fields after submitting
+      setTask(prevTask.task);
       setVisible(false);
     }
   };
@@ -42,9 +42,9 @@ const NewTask: React.FC<NewTaskProps> = ({ onAddTask, isVisible, setVisible, tas
       <input value={task} onChange={(e) => setTask(e.target.value)}
         placeholder='Enter the description'
       />
-      <button onClick={handleSubmit}>Add Task</button>
+      <button onClick={handleSubmit}>Save</button>
     </div>
   );
 }
 
-export default NewTask;
+export default EditTask;
