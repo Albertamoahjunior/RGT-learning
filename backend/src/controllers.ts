@@ -128,7 +128,7 @@ async function delete_task(req:Request, res:Response) :Promise<void>{
     let tasks: Task[] = await general_read_file();
 
     if(!id){
-      res.status(400).json({message:'bad request no user id submitted', data:{}});
+      res.status(400).json({message:'bad request no task id submitted', data:{}});
       return;
     }
 
@@ -136,7 +136,7 @@ async function delete_task(req:Request, res:Response) :Promise<void>{
 
   //write new file with updated tasks information(removing the specified task)
     await general_write_file(tasks);
-    res.status(200).json({message:'user information deleted successfully', data:{}});
+    res.status(200).json({message:'task deleted successfully', data:{}});
     return;
 
   } catch (error) {
