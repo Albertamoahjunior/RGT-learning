@@ -2,7 +2,7 @@ import fs from 'fs';
 import {Task} from './models';
 
 //read file and return content
-export async function general_read_file() :Promise<User[]>{
+export async function general_read_file() :Promise<Task[]>{
   try {
     let data = await fs.promises.readFile('tasks.json', 'utf8');
     let tasks: Task[] = JSON.parse(data);

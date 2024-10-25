@@ -18,9 +18,11 @@ router.delete('/task/:id', controller.delete_task);
 //update task information
 router.put('/task/:id', controller.update_task);
 
-//mark as complete or not
+//mark as complete
 router.patch('/task/:id/complete', controller.complete_task);
-router.patch('/task/:id/unfinished', controller.unfinish_task);
+
+//mark as unfinish
+router.patch('/task/:id/unfinish', controller.unfinish_task);
 
 
 
