@@ -7,7 +7,23 @@
   height: 80%;
   width: 80%;
   border: 0;
+  background-color: #ffff;
+}
+
+.top-bar{
+  display: flex;
+  flex-direction: row;
+}
+
+.top-bar .add-btn{
+  font-size: 2rem;
+  font-size: 200;
   background-color: #f3f3f3;
+  border: 0;
+  margin-left: auto;
+  height: 3.5rem;
+  width: 3rem;
+  padding: inherit;
 }
 
 .content{

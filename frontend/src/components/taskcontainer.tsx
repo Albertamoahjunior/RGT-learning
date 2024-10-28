@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import {FaPlus} from 'react-icons/fa';
 import EditTask from "./edittask";
 import NewTask from './newtask';
 import { Task } from '../models/task';
@@ -25,7 +26,11 @@ const TaskContainer: React.FC = () => {
     const fetch_tasks = async ()  => {
       try {
         let response = await axios.get('http://localhost:2000/tasks');
-        setTasks(response.data.data);
+        if (response.status === 200){
+          setTasks(response.data.data);
+        }else{
+          setTasks([]);
+        }
       } catch (error) {
         console.log(error);
         alert('Could not fetch tasks');
@@ -87,12 +92,23 @@ const TaskContainer: React.FC = () => {
   return (
     <div className='task-container'>
         <div className='top-bar'>
-          <h1>Task List</h1>
-          <button onClick={()=> setVisibility(true)}>Add New Task</button>
+          <h1>Tasks</h1>
+          <button className='add-btn' onClick={()=> setVisibility(true)}><FaPlus/></button>
         </div>
         <div className='content'>
-          {tasks.map((task:any, index:any) => <TaskTab task={task} key={task.id || index} onDelete={deleteTask} onEdit={setUpEdit}/>)}
-          <NewTask isVisible={visibility} onAddTask={handleAddTask} setVisible={setVisibility} taskNumber={Math.round(Math.random())}/>
+            {tasks.length >= 1 ? (
+              tasks.map((task: any, index: any) => (
+                <TaskTab
+                  task={task}
+                  key={task.id || index}
+                  onDelete={deleteTask}
+                  onEdit={setUpEdit}
+                />
+              ))
+            ) : (
+              <p>No tasks yet</p>
+            )}
+          <NewTask isVisible={visibility} onAddTask={handleAddTask} setVisible={setVisibility} taskNumber={Math.round(Math.random() *10000) + 1}/>
           {editVisibility && <EditTask isVisible={editVisibility} onEditTask={handleEditTask} setVisible={setEditVisibility} prevTask={prevTask}/>}
         </div>
     </div>
