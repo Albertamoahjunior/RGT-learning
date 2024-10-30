@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {FaPlus} from 'react-icons/fa';
 import EditTask from "./edittask";
 import NewTask from './newtask';
@@ -6,6 +6,7 @@ import { Task } from '../models/task';
 import TaskTab from './tasktab';
 import '../styles/taskcontainer.css'
 import axios from 'axios';
+import { ThemeContext } from "../context/themeContext";
 
 //create a dummy task todo
 const dummy : Task = {
@@ -21,6 +22,10 @@ const TaskContainer: React.FC = () => {
   const [visibility, setVisibility] = useState<boolean>(false);
   const [editVisibility, setEditVisibility] = useState<boolean>(false);
   const [prevTask, setPrevTask] = useState<Task>(dummy);
+
+  const {theme, changeTheme} = useContext(ThemeContext);
+
+
 
   useEffect(()=>{
     const fetch_tasks = async ()  => {
@@ -91,6 +96,10 @@ const TaskContainer: React.FC = () => {
 
   return (
     <div className='task-container'>
+
+      <button className='switch-btn' onClick={changeTheme}
+      style={{backgroundColor: theme === 'light' ? '#222936' : 'white',
+      color: theme === 'light'? 'white' : 'black' }}>{theme === 'light'? 'dark' : 'light'}</button>
         <div className='top-bar'>
           <h1>Tasks</h1>
           <button className='add-btn' onClick={()=> setVisibility(true)}><FaPlus/></button>

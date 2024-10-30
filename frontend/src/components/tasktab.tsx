@@ -1,12 +1,20 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {FaTrash, FaCheckCircle, FaClock, FaCog} from 'react-icons/fa'
 import {Task} from '../models/task';
 import '../styles/tasktab.css';
 import axios from 'axios';
+import { ThemeContext } from "../context/themeContext";
 
-const TaskTab :React.FC<{task: Task; onDelete :(taskId : number) => void; onEdit :(task: Task) => void}>= (props) =>{
+interface taskProps {
+  task: Task;
+  onDelete :(taskId : number) => void;
+  onEdit :(task: Task) => void
+}
+
+const TaskTab :React.FC<taskProps>= (props) =>{
   const [complete, setComplete] = useState<boolean>(props.task.complete);
 
+  let {theme, changeTheme} = useContext(ThemeContext);
 
   const mark = async () =>{
       setComplete(!complete);
@@ -26,7 +34,7 @@ const TaskTab :React.FC<{task: Task; onDelete :(taskId : number) => void; onEdit
 
 
   return(
-    <div className='task-tab'>
+    <div className='task-tab' style={{color: theme === 'light' ? 'black' : 'black'}}>
       <button onClick={()=> props.onEdit(props.task)} className='edit-button'> <FaCog/> </button>
       <h3>{props.task.title}</h3>
       <div className='desc-area'>
