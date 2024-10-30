@@ -41,7 +41,7 @@ const TaskTab :React.FC<taskProps>= (props) =>{
       <div className='desc-area'>
         <p>{props.task.task}</p>
       </div>
-      <p>Date created: {format(parseISO(props.task.date), 'MM/dd/yyyy')}</p>
+      <p>Date created: { (props.task.date.includes('T'))? format(parseISO(props.task.date), 'MM/dd/yyyy'): props.task.date}</p>
       <button className={complete? 'comp-btn' : 'unfi-btn'} onClick={mark}>{complete? <FaCheckCircle/> : <FaClock/> }</button>
       <button className='del-button' onClick={()=> props.onDelete(props.task.id)}><FaTrash/></button>
     </div>
