@@ -4,6 +4,7 @@ import {Task} from '../models/task';
 import '../styles/tasktab.css';
 import axios from 'axios';
 import { ThemeContext } from "../context/themeContext";
+import { format, parseISO } from 'date-fns';
 
 interface taskProps {
   task: Task;
@@ -40,7 +41,7 @@ const TaskTab :React.FC<taskProps>= (props) =>{
       <div className='desc-area'>
         <p>{props.task.task}</p>
       </div>
-      <p>Date created: {props.task.date}</p>
+      <p>Date created: {format(parseISO(props.task.date), 'MM/dd/yyyy')}</p>
       <button className={complete? 'comp-btn' : 'unfi-btn'} onClick={mark}>{complete? <FaCheckCircle/> : <FaClock/> }</button>
       <button className='del-button' onClick={()=> props.onDelete(props.task.id)}><FaTrash/></button>
     </div>
