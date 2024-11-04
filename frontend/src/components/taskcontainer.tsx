@@ -76,8 +76,7 @@ const TaskContainer: React.FC = () => {
     try {
       const response = await axios.put(`http://localhost:2000/tasks/task/${task.id}`, task);
 
-      console.log(response.data.data.length);
-      if(response.data.data){
+      if(response.data.data.rowCount){
         setTasks(prevTasks => prevTasks.filter(old_task => old_task.id !== task.id));
         setTasks(prevTasks => [...prevTasks, task]);
         alert(response.data.message);
@@ -95,9 +94,14 @@ const TaskContainer: React.FC = () => {
     //make call to make changes in the back
     try {
       let response = await axios.delete(`http://localhost:2000/tasks/task/${taskId}`)
+
       //effect change in the front when everything is successful
-      setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
-      alert(response.data.message);
+      if(response.data.data.rowCount){
+        setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
+        alert(response.data.message);
+      }else{
+        throw new Error('database error');
+      }
     } catch (error) {
       console.log(error);
       alert('Could not delete task');

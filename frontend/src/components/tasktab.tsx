@@ -22,10 +22,22 @@ const TaskTab :React.FC<taskProps>= (props) =>{
     try {
       if(complete) {
         let response = await axios.patch(`http://localhost:2000/tasks/task/${props.task.id}/unfinish`);
-        alert(response.data.message);
+        if(response.data.data.rowCount){
+          alert(response.data.message);
+        }else{
+          setComplete(!complete);
+          throw new Error('database error');
+          alert('could not mark task');
+        }
       }else{
         let response = await axios.patch(`http://localhost:2000/tasks/task/${props.task.id}/complete`);
-        alert(response.data.message);
+        if(response.data.data.rowCount){
+          alert(response.data.message);
+        }else{
+          setComplete(!complete);
+          throw new Error('database error');
+          alert('could not mark task');
+        }
       }
     } catch (error) {
       console.log(error);

@@ -82,7 +82,7 @@ async function update_task(req:Request, res:Response) :Promise<void>{
     const {title, task} = taskUpdate;
     const result = await update_task_db(id, title, task);
     console.log(result);
-    res.status(200).json({message:'task updated successfully', data:{}});
+    res.status(200).json({message:'task updated successfully', data:result});
     return;
 
   } catch (error) {
@@ -104,7 +104,7 @@ async function delete_task(req:Request, res:Response) :Promise<void>{
 
     const del = await delete_task_db(id);
     console.log(del);
-    res.status(200).json({message:'task deleted successfully', data:{}});
+    res.status(200).json({message:'task deleted successfully', data: del});
     return;
 
   } catch (error) {
@@ -132,7 +132,7 @@ async function complete_task (req: Request, res: Response) : Promise<void>{
     if(task){
       let result = await update_complete(id);
       console.log(result);
-      res.status(200).json({message:'task updated successfully', data:{}});
+      res.status(200).json({message:'task updated successfully', data:result});
       return;
     }else{
       res.status(404).json({message:'task not found', data:{}});
@@ -163,7 +163,7 @@ async function unfinish_task (req: Request, res: Response) : Promise<void>{
     if(task){
       let result = await update_unfinish(id);
       console.log(result);
-      res.status(200).json({message:'task updated successfully', data:{}});
+      res.status(200).json({message:'task updated successfully', data:result});
       return;
     }else{
       res.status(404).json({message:'task not found', data:{}});
