@@ -50,14 +50,13 @@ async function get_task(req:Request, res:Response) :Promise<void>{
 //function to add new task
 async function add_task(req:Request, res:Response) :Promise<void>{
   try {
-    const {id, title, task} = req.body;
+    const {title, task} = req.body;
 
     if(!task){
       res.status(400).json({message:'bad request no task information body found', data: {}});
       return;
     }else{
-      const new_task: Task | undefined = await add_task_db(id, title, task);
-      console.log(new_task);
+      const new_task: Task | undefined = await add_task_db(title, task);
       res.status(200).json({message: 'new task added successfully', data:new_task})
     }
 

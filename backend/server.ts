@@ -1,14 +1,21 @@
 import express from 'express';
 import router from './src/routes'
 import cors from 'cors';
+import dotenv from "dotenv";
 
+dotenv.config();
 
+const corsOptions = {
+  origin: ['http://localhost:8000', 'http://localhost:2000'], // Allow requests from both origins
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+};
 //initialize the express app and port number
 const app = express();
 const PORT : number = 2000;
 
 
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use('/tasks', router);

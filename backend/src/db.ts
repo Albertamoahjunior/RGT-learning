@@ -23,9 +23,9 @@ export async function get_task_db(taskId: number){
   }
 }
 
-export async function add_task_db(id: number, title: string, task: string){
+export async function add_task_db(title: string, task: string){
   try {
-    const results:QueryResult<Task> = await pool.query('INSERT INTO task (id, title, task) VALUES($1, $2, $3) RETURNING *', [id, title, task]);
+    const results:QueryResult<Task> = await pool.query('INSERT INTO task (title, task) VALUES($1, $2) RETURNING *', [title, task]);
     return results.rows[0];
   } catch (error) {
     console.log( error);
