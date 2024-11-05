@@ -1,40 +1,74 @@
-import fs from 'fs';
+import {QueryResult} from 'pg';
 import {Task} from './models';
+import pool from './databaseConnection'
 
-//read file and return content
-export async function general_read_file() :Promise<Task[]>{
+
+export async function get_tasks(){
   try {
-    let data = await fs.promises.readFile('tasks.json', 'utf8');
-    let tasks: Task[] = JSON.parse(data);
-    return tasks;
+    const results:QueryResult<Task> = await pool.query('SELECT * FROM task');
+    return results.rows;
   } catch (error) {
-    throw new Error('Failed to read file');
+    console.log( error)
+    return;
   }
 }
 
-
-//write to file;
-export async function general_write_file(tasks :Task[]) :Promise<void> {
+export async function get_task_db(taskId: number){
   try {
-    await fs.promises.writeFile('tasks.json',  JSON.stringify(tasks), 'utf8');
+    const results:QueryResult<Task> = await pool.query('SELECT * FROM task WHERE id = $1',[taskId]);
+    return results.rows[0];
   } catch (error) {
-      throw new Error('failed to write');
+    console.log( error)
+    return;
   }
 }
 
-//check if exists
-export function file_exist(): Promise<boolean> {
-  return new Promise((resolve, reject) => {
-    fs.readFile('tasks.json', 'utf8', (err) => {
-      if (err) {
-        if (err.code === 'ENOENT') {
-          resolve(false);  // File does not exist
-        } else {
-          reject(err);  // Handle other errors
-        }
-      } else {
-        resolve(true);  // File exists
-      }
-    });
-  });
+export async function add_task_db(title: string, task: string){
+  try {
+    const results:QueryResult<Task> = await pool.query('INSERT INTO task (title, task) VALUES($1, $2) RETURNING *', [title, task]);
+    return results.rows[0];
+  } catch (error) {
+    console.log( error);
+    return;
+  }
+}
+
+export async function delete_task_db(taskId: number){
+  try {
+    const results = await pool.query('DELETE FROM task WHERE id = $1',[taskId]);
+    return results
+  } catch (error) {
+    console.log( error)
+    return;
+  }
+}
+
+export async function update_task_db(taskId: number, title:string, task: string){
+  try {
+    const results = await pool.query('UPDATE task SET title = $1, task = $2  WHERE id = $3',[title, task, taskId]);
+    return results
+  } catch (error) {
+    console.log( error)
+    return;
+  }
+}
+
+export async function update_complete(taskId: number){
+  try {
+    const results = await pool.query('UPDATE task SET complete = $1 WHERE id = $2',[true, taskId]);
+    return results
+  } catch (error) {
+    console.log( error)
+    return;
+  }
+}
+
+export async function update_unfinish(taskId: number){
+  try {
+    const results = await pool.query('UPDATE task SET complete = $1 WHERE id = $2',[false, taskId]);
+    return results
+  } catch (error) {
+    console.log( error)
+    return;
+  }
 }

@@ -8,6 +8,7 @@
   width: 80%;
   border: 0;
   background-color: #0000;
+  overflow-y: hidden;
 }
 
 .switch-btn{
@@ -37,4 +38,7 @@
 .content{
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
+  overflow-y: auto;
+  overflow-x: hidden;
 }

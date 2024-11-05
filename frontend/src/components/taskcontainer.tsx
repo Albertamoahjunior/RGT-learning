@@ -49,14 +49,21 @@ const TaskContainer: React.FC = () => {
     //first make the call to add task in the back
     try {
       const response = await axios.post('http://localhost:2000/tasks/task', newTask);
-      alert(response.data.message);
+      if(response.data.data){
+        newTask = response.data.data;
+        //and then effect it in the frontend
+        setTasks(prevTasks => [...prevTasks, newTask]); // Add the new task to the list
+        alert('task added successfully')
+      }else{
+        throw new Error("database error");
+
+      }
+
     } catch (error) {
       console.log(error);
       alert('Could not add task');
     }
 
-    //and then effect it in the frontend
-    setTasks(prevTasks => [...prevTasks, newTask]); // Add the new task to the list
   };
 
   const setUpEdit = (task: Task) =>{
@@ -68,59 +75,67 @@ const TaskContainer: React.FC = () => {
     //first make the api call to make changes to the back
     try {
       const response = await axios.put(`http://localhost:2000/tasks/task/${task.id}`, task);
-      alert(response.data.message);
+
+      if(response.data.data.rowCount){
+        setTasks(prevTasks => prevTasks.filter(old_task => old_task.id !== task.id));
+        setTasks(prevTasks => [...prevTasks, task]);
+        alert(response.data.message);
+      }else{
+        throw new Error('database error');
+      }
 
     } catch (error) {
       console.log(error);
       alert('Could not edit task')
     }
-
-    //and then make it reflect on the front end
-    setTasks(prevTasks => prevTasks.filter(old_task => old_task.id !== task.id));
-    setTasks(prevTasks => [...prevTasks, task]);
   }
 
   const deleteTask = async (taskId: number) => {
     //make call to make changes in the back
     try {
       let response = await axios.delete(`http://localhost:2000/tasks/task/${taskId}`)
-      alert(response.data.message);
+
+      //effect change in the front when everything is successful
+      if(response.data.data.rowCount){
+        setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
+        alert(response.data.message);
+      }else{
+        throw new Error('database error');
+      }
     } catch (error) {
       console.log(error);
       alert('Could not delete task');
     }
-
-    //effect change in the front when everything is successful
-    setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
   };
 
   return (
-    <div className='task-container'>
+      <div className='task-container'>
 
-      <button className='switch-btn' onClick={changeTheme}
-      style={{backgroundColor: theme === 'light' ? '#222936' : 'white',
-      color: theme === 'light'? 'white' : 'black' }}>{theme === 'light'? 'dark' : 'light'}</button>
-        <div className='top-bar'>
-          <h1>Tasks</h1>
-          <button className='add-btn' onClick={()=> setVisibility(true)}><FaPlus/></button>
-        </div>
-        <div className='content'>
-            {tasks.length >= 1 ? (
-              tasks.map((task: any, index: any) => (
-                <TaskTab
-                  task={task}
-                  key={task.id || index}
-                  onDelete={deleteTask}
-                  onEdit={setUpEdit}
-                />
-              ))
-            ) : (
-              <p>No tasks yet</p>
-            )}
-          <NewTask isVisible={visibility} onAddTask={handleAddTask} setVisible={setVisibility} taskNumber={Math.round(Math.random() *10000) + 1}/>
-          {editVisibility && <EditTask isVisible={editVisibility} onEditTask={handleEditTask} setVisible={setEditVisibility} prevTask={prevTask}/>}
-        </div>
-    </div>
+
+        <button className='switch-btn' onClick={changeTheme}
+        style={{backgroundColor: theme === 'light' ? '#222936' : 'white',
+        color: theme === 'light'? 'white' : 'black' }}>{theme === 'light'? 'dark' : 'light'}</button>
+          <div className='top-bar'>
+            <h1>Tasks</h1>
+            <button className='add-btn' onClick={()=> setVisibility(true)}><FaPlus/></button>
+          </div>
+          <div className='content'>
+              {tasks.length >= 1 ? (
+                tasks.map((task: any, index: any) => (
+                  <TaskTab
+                    task={task}
+                    key={task.id || index}
+                    onDelete={deleteTask}
+                    onEdit={setUpEdit}
+                  />
+                ))
+              ) : (
+                <p>No tasks yet</p>
+              )}
+            <NewTask isVisible={visibility} onAddTask={handleAddTask} setVisible={setVisibility} taskNumber={Math.round(Math.random() *10000) + 1}/>
+            {editVisibility && <EditTask isVisible={editVisibility} onEditTask={handleEditTask} setVisible={setEditVisibility} prevTask={prevTask}/>}
+          </div>
+      </div>
   );
 }
 

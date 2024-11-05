@@ -43,7 +43,10 @@
     "skipLibCheck": true,
 
     /* Advanced Options */
-    "forceConsistentCasingInFileNames": true  /* Disallow inconsistently-cased references to the same file. */
+    "forceConsistentCasingInFileNames": true,  /* Disallow inconsistently-cased references to the same file. */
+
+    /*env options*/
+    "typeRoots": ["./node_modules/@types", "./env.d.ts"]
   },
   "include": [
       "src/**/*"

@@ -1,12 +1,11 @@
 import {Request, Response} from 'express';
 import {Task} from './models';
-import {general_read_file, general_write_file, file_exist} from './db'
+import {get_tasks, get_task_db, add_task_db, delete_task_db, update_task_db, update_complete, update_unfinish} from './db'
 
 //function to get all tasks
 async function get_all_tasks(_req:Request, res:Response) :Promise<void>{
   try {
-    if(await file_exist()){
-      let tasks: Task[] = await general_read_file();
+      let tasks: Task[] | undefined = await get_tasks();
 
       if(!tasks){
         res.status(404).json({message: 'no tasks found', data: {}})
@@ -15,11 +14,6 @@ async function get_all_tasks(_req:Request, res:Response) :Promise<void>{
         res.status(200).json({message: 'All tasks', data: tasks})
         return;
       }
-    }else{
-      res.status(404).json({message: 'no tasks found', data: {}})
-      return;
-    }
-
 
   } catch (error) {
     console.log(error);
@@ -32,14 +26,13 @@ async function get_all_tasks(_req:Request, res:Response) :Promise<void>{
 async function get_task(req:Request, res:Response) :Promise<void>{
   try {
     const id:number | undefined = req.params['id'] ? parseInt(req.params['id']) : undefined;
-    let tasks: Task[] = await general_read_file();
 
     if(!id){
       res.status(400).json({message:'bad requests no id number found', data: {}});
       return;
     }
 
-    let task = tasks.find(task => task.id === id);
+    let task : Task | undefined = await get_task_db(id);
 
     if(task){
       res.status(200).json({message: 'task found', data: task});
@@ -57,33 +50,16 @@ async function get_task(req:Request, res:Response) :Promise<void>{
 //function to add new task
 async function add_task(req:Request, res:Response) :Promise<void>{
   try {
-    const task :Task = req.body;
+    const {title, task} = req.body;
 
     if(!task){
       res.status(400).json({message:'bad request no task information body found', data: {}});
       return;
-    }
-    //try to read file if it exists first before writing to it
-    if(!await file_exist()){
-      await general_write_file([task]);
-      res.status(201).json({message:'task added successfully' , data:{}});
-      return;
     }else{
-      let tasks :Task[] = await general_read_file();
-
-      let exist = tasks.find(extask => extask.id === task.id);
-
-      if(!exist){
-        tasks.push(task);
-
-        await general_write_file(tasks);
-        res.status(201).json({message:'task added successfully' , data:{}});
-        return;
-      }else{
-        res.status(400).json({message:'task already exist' , data:{}});
-        return;
-      }
+      const new_task: Task | undefined = await add_task_db(title, task);
+      res.status(200).json({message: 'new task added successfully', data:new_task})
     }
+
   } catch (error) {
     res.status(500).json({message:'server error', data: error});
     return;
@@ -96,22 +72,17 @@ async function update_task(req:Request, res:Response) :Promise<void>{
   //check if user exists
   try {
     const id:number  | undefined = req.params['id'] ? parseInt(req.params['id']) : undefined;
-    let tasks: Task[] = await general_read_file();
-    const task: Task = req.body;
+    const taskUpdate: Task = req.body;
 
-    if(!task || !id){
+    if(!taskUpdate || !id){
       res.status(400).json({message:'no task information found', data:{}});
       return;
     }
 
-    //take out old task information
-    tasks = tasks.filter(task => task.id !== id);
-
-    tasks.push(task);
-
-    //write new file with updated tasks information
-    await general_write_file(tasks);
-    res.status(200).json({message:'task updated successfully', data:{}});
+    const {title, task} = taskUpdate;
+    const result = await update_task_db(id, title, task);
+    console.log(result);
+    res.status(200).json({message:'task updated successfully', data:result});
     return;
 
   } catch (error) {
@@ -125,18 +96,15 @@ async function delete_task(req:Request, res:Response) :Promise<void>{
   //check if task exists
   try {
     const id:number  | undefined = req.params['id'] ? parseInt(req.params['id']) : undefined;
-    let tasks: Task[] = await general_read_file();
 
     if(!id){
       res.status(400).json({message:'bad request no task id submitted', data:{}});
       return;
     }
 
-    tasks = tasks.filter(task => task.id !== id);
-
-  //write new file with updated tasks information(removing the specified task)
-    await general_write_file(tasks);
-    res.status(200).json({message:'task deleted successfully', data:{}});
+    const del = await delete_task_db(id);
+    console.log(del);
+    res.status(200).json({message:'task deleted successfully', data: del});
     return;
 
   } catch (error) {
@@ -151,7 +119,6 @@ async function complete_task (req: Request, res: Response) : Promise<void>{
   //check if task exists
   try {
     const id:number  | undefined = req.params['id'] ? parseInt(req.params['id']) : undefined;
-    let tasks: Task[] = await general_read_file();
 
 
     if(!id){
@@ -160,20 +127,12 @@ async function complete_task (req: Request, res: Response) : Promise<void>{
     }
 
     //find the task
-    let task: Task | undefined = tasks.find(task => task.id === id);
+    let task: Task | undefined = await get_task_db(id);
 
     if(task){
-      //take out old task information
-      tasks = tasks.filter(task => task.id !== id);
-
-      //update the task
-      task['complete'] = true;
-
-      tasks.push(task);
-
-      //write new file with updated tasks information
-      await general_write_file(tasks);
-      res.status(200).json({message:'task updated successfully', data:{}});
+      let result = await update_complete(id);
+      console.log(result);
+      res.status(200).json({message:'task updated successfully', data:result});
       return;
     }else{
       res.status(404).json({message:'task not found', data:{}});
@@ -191,7 +150,6 @@ async function unfinish_task (req: Request, res: Response) : Promise<void>{
   //check if task exists
   try {
     const id:number  | undefined = req.params['id'] ? parseInt(req.params['id']) : undefined;
-    let tasks: Task[] = await general_read_file();
 
 
     if(!id){
@@ -200,20 +158,12 @@ async function unfinish_task (req: Request, res: Response) : Promise<void>{
     }
 
     //find the task
-    let task: Task | undefined = tasks.find(task => task.id === id);
+    let task: Task | undefined = await get_task_db(id);
 
     if(task){
-      //take out old task information
-      tasks = tasks.filter(task => task.id !== id);
-
-      //update the task
-      task['complete'] = false;
-
-      tasks.push(task);
-
-      //write new file with updated tasks information
-      await general_write_file(tasks);
-      res.status(200).json({message:'task updated successfully', data:{}});
+      let result = await update_unfinish(id);
+      console.log(result);
+      res.status(200).json({message:'task updated successfully', data:result});
       return;
     }else{
       res.status(404).json({message:'task not found', data:{}});

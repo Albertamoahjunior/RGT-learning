@@ -1,25 +1,21 @@
 import express from 'express';
 import router from './src/routes'
 import cors from 'cors';
+import dotenv from "dotenv";
 
+dotenv.config();
+
+const corsOptions = {
+  origin: ['http://localhost:8000', 'http://localhost:2000'], // Allow requests from both origins
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+};
 //initialize the express app and port number
 const app = express();
 const PORT : number = 2000;
 
-// CORS options
-// const corsOptions = {
-//   origin: (origin: string | undefined, callback: any) => {
-//     if (!origin || origin === 'http://localhost') {
-//       // Allow requests with no origin (e.g., mobile apps, Postman) or from localhost
-//       callback(null, true);
-//     } else {
-//       // Block all other origins
-//       callback(new Error('Not allowed by CORS'));
-//     }
-//   },
-// };
 
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use('/tasks', router);
