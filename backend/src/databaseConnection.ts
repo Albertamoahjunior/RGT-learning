@@ -41,7 +41,7 @@ async function createDatabaseIfNotExists() {
 // Pool configuration for the target database
 const pool = new Pool(dbConfig);
 
-// Function to create tables based on your sample schema
+// Function to create tables
 async function createTables() {
   const createTaskTableQuery = `
     CREATE TABLE IF NOT EXISTS public.task (
@@ -50,8 +50,28 @@ async function createTables() {
       task character varying(255),
       date timestamp without time zone DEFAULT CURRENT_DATE,
       complete boolean DEFAULT false,
-      CONSTRAINT task_pkey PRIMARY KEY (id)
+      user_id integer,
+      CONSTRAINT task_pkey PRIMARY KEY (id),
+      CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES public.users(id)
     );
+  `;
+
+  const createUserTableQuery = `
+    CREATE TABLE  IF NOT EXISTS public.users (
+      id integer NOT NULL PRIMARY KEY,
+      username character varying(255) NOT NULL UNIQUE,
+      password character varying(255) NOT NULL
+    );
+  `;
+
+  const createUserIdSeqQuery = `
+    CREATE SEQUENCE IF NOT EXISTS public.user_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
   `;
 
   const createTaskIdSeqQuery = `
@@ -69,6 +89,8 @@ async function createTables() {
 
     await client.query(createTaskIdSeqQuery);
     await client.query(createTaskTableQuery);
+    await client.query(createUserTableQuery);
+    await client.query(createUserIdSeqQuery);
 
     console.log("Tables created or verified.");
     client.release();
