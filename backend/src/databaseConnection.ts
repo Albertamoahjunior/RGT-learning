@@ -43,6 +43,14 @@ const pool = new Pool(dbConfig);
 
 // Function to create tables
 async function createTables() {
+  const createUserTableQuery = `
+    CREATE TABLE IF NOT EXISTS public.users (
+      id integer NOT NULL PRIMARY KEY,
+      username character varying(255) NOT NULL UNIQUE,
+      password character varying(255) NOT NULL
+    );
+  `;
+
   const createTaskTableQuery = `
     CREATE TABLE IF NOT EXISTS public.task (
       id integer NOT NULL DEFAULT nextval('public.task_id_seq'::regclass),
@@ -53,14 +61,6 @@ async function createTables() {
       user_id integer,
       CONSTRAINT task_pkey PRIMARY KEY (id),
       CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES public.users(id)
-    );
-  `;
-
-  const createUserTableQuery = `
-    CREATE TABLE  IF NOT EXISTS public.users (
-      id integer NOT NULL PRIMARY KEY,
-      username character varying(255) NOT NULL UNIQUE,
-      password character varying(255) NOT NULL
     );
   `;
 
@@ -87,10 +87,13 @@ async function createTables() {
   try {
     const client = await pool.connect();
 
+    // Create user table and sequence first
+    await client.query(createUserIdSeqQuery);
+    await client.query(createUserTableQuery);
+
+    // Create task table and sequence
     await client.query(createTaskIdSeqQuery);
     await client.query(createTaskTableQuery);
-    await client.query(createUserTableQuery);
-    await client.query(createUserIdSeqQuery);
 
     console.log("Tables created or verified.");
     client.release();
