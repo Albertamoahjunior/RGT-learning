@@ -45,7 +45,7 @@ const pool = new Pool(dbConfig);
 async function createTables() {
   const createUserTableQuery = `
     CREATE TABLE IF NOT EXISTS public.users (
-      id integer NOT NULL PRIMARY KEY,
+      id integer NOT NULL PRIMARY KEY DEFAULT nextval('public.user_id_seq'::regclass),
       username character varying(255) NOT NULL UNIQUE,
       password character varying(255) NOT NULL
     );
