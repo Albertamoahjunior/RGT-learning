@@ -1,23 +1,32 @@
 import {Request, Response} from 'express';
-import {Task} from './models';
-import {get_tasks, get_task_db, add_task_db, delete_task_db, update_task_db, update_complete, update_unfinish} from './db'
+import {Task} from '../models';
+import {get_tasks, get_task_db, add_task_db, delete_task_db,
+  update_task_db, update_complete, update_unfinish } from '../db';
+
 
 //function to get all tasks
-async function get_all_tasks(_req:Request, res:Response) :Promise<void>{
-  try {
-      let tasks: Task[] | undefined = await get_tasks();
+async function get_all_tasks(req:Request, res:Response) :Promise<void>{
+  const user_id:number  | undefined = req.params['user'] ? parseInt(req.params['user']) : undefined;
 
-      if(!tasks){
-        res.status(404).json({message: 'no tasks found', data: {}})
-        return;
-      }else{
-        res.status(200).json({message: 'All tasks', data: tasks})
-        return;
-      }
+  if(user_id){
+    try {
+        let tasks: Task[] | undefined = await get_tasks(user_id);
 
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({message:'server error', data: error});
+        if(!tasks){
+          res.status(404).json({message: 'no tasks found', data: {}})
+          return;
+        }else{
+          res.status(200).json({message: 'All tasks', data: tasks})
+          return;
+        }
+
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({message:'server error', data: error});
+      return;
+    }
+  }else{
+    res.status(400).json({message: 'no user id appended'})
     return;
   }
 }
@@ -26,13 +35,16 @@ async function get_all_tasks(_req:Request, res:Response) :Promise<void>{
 async function get_task(req:Request, res:Response) :Promise<void>{
   try {
     const id:number | undefined = req.params['id'] ? parseInt(req.params['id']) : undefined;
+    const user_id:number  | undefined = req.query['user'] ? parseInt(req.query['user'] as string) : undefined;
 
-    if(!id){
+    if(!id || !user_id){
       res.status(400).json({message:'bad requests no id number found', data: {}});
       return;
     }
 
-    let task : Task | undefined = await get_task_db(id);
+    console.log({id: id, user: user_id});
+
+    let task : Task | undefined = await get_task_db(id, user_id);
 
     if(task){
       res.status(200).json({message: 'task found', data: task});
@@ -50,13 +62,13 @@ async function get_task(req:Request, res:Response) :Promise<void>{
 //function to add new task
 async function add_task(req:Request, res:Response) :Promise<void>{
   try {
-    const {title, task} = req.body;
+    const {title, task, user_id} = req.body;
 
     if(!task){
       res.status(400).json({message:'bad request no task information body found', data: {}});
       return;
     }else{
-      const new_task: Task | undefined = await add_task_db(title, task);
+      const new_task: Task | undefined = await add_task_db(title, task, user_id);
       res.status(200).json({message: 'new task added successfully', data:new_task})
     }
 
@@ -79,8 +91,8 @@ async function update_task(req:Request, res:Response) :Promise<void>{
       return;
     }
 
-    const {title, task} = taskUpdate;
-    const result = await update_task_db(id, title, task);
+    const {title, task, user_id} = taskUpdate;
+    const result = await update_task_db(id, title, task, user_id);
     console.log(result);
     res.status(200).json({message:'task updated successfully', data:result});
     return;
@@ -96,16 +108,22 @@ async function delete_task(req:Request, res:Response) :Promise<void>{
   //check if task exists
   try {
     const id:number  | undefined = req.params['id'] ? parseInt(req.params['id']) : undefined;
+    const user_id:number  | undefined = req.query['user'] ? parseInt(req.query['user'] as string) : undefined;
 
-    if(!id){
+    if(!id || !user_id){
       res.status(400).json({message:'bad request no task id submitted', data:{}});
       return;
     }
 
-    const del = await delete_task_db(id);
-    console.log(del);
-    res.status(200).json({message:'task deleted successfully', data: del});
-    return;
+    const del = await delete_task_db(id, user_id);
+    if(del && del.rowCount){
+      res.status(200).json({message:'task deleted successfully', data: del ? del.rowCount: null});
+      return;
+    }else{
+      res.status(404).json({message:'task deleted task does not exist', data: del? del.rowCount : null});
+      return;
+    }
+
 
   } catch (error) {
     res.status(500).json({message:'Cannot update file', data:error});
@@ -119,18 +137,19 @@ async function complete_task (req: Request, res: Response) : Promise<void>{
   //check if task exists
   try {
     const id:number  | undefined = req.params['id'] ? parseInt(req.params['id']) : undefined;
+    const user_id:number  | undefined = req.query['user'] ? parseInt(req.query['user'] as string ) : undefined;
 
 
-    if(!id){
+    if(!id || !user_id){
       res.status(400).json({message:'no task id found', data:{}});
       return;
     }
 
     //find the task
-    let task: Task | undefined = await get_task_db(id);
+    let task: Task | undefined = await get_task_db(id, user_id);
 
     if(task){
-      let result = await update_complete(id);
+      let result = await update_complete(id, user_id);
       console.log(result);
       res.status(200).json({message:'task updated successfully', data:result});
       return;
@@ -150,18 +169,19 @@ async function unfinish_task (req: Request, res: Response) : Promise<void>{
   //check if task exists
   try {
     const id:number  | undefined = req.params['id'] ? parseInt(req.params['id']) : undefined;
+    const user_id:number  | undefined = req.query['user'] ? parseInt(req.query['user'] as string) : undefined;
 
 
-    if(!id){
+    if(!id || !user_id){
       res.status(400).json({message:'no task id found', data:{}});
       return;
     }
 
     //find the task
-    let task: Task | undefined = await get_task_db(id);
+    let task: Task | undefined = await get_task_db(id, user_id);
 
     if(task){
-      let result = await update_unfinish(id);
+      let result = await update_unfinish(id, user_id);
       console.log(result);
       res.status(200).json({message:'task updated successfully', data:result});
       return;
