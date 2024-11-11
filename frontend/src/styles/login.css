@@ -57,3 +57,8 @@
   text-decoration: none;
   color: #0388fc;
 }
+
+.login-background .login form{
+  display: flex;
+  flex-direction: column;
+}

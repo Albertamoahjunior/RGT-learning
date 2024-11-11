@@ -10,10 +10,22 @@ const Login: React.FC = () =>{
 
   const navigate = useNavigate();
 
-  const handleLogin = () =>{
+  const handleLogin = async () =>{
     //make api call to login on the backend to get token
-    Auth.login();
-    navigate('/');
+    const logged = await Auth.login();
+
+    switch (logged) {
+      case true:
+        navigate('/');
+        break;
+      case false:
+        alert('wrong credentials');
+        break;
+      default:
+        alert('An error occured while trying to login')
+        break;
+    }
+
   }
 
   return(
@@ -23,9 +35,11 @@ const Login: React.FC = () =>{
     </h3>
     <h4>Log In </h4>
       <div className='login'>
-        <input value={username} onChange={(e)=>setUsername(e.target.value)} placeholder='Enter username'/>
-        <input type='password' value={password} onChange={(e)=>setPassword(e.target.value)} placeholder='Enter Password'/>
-        <button onClick={handleLogin}>log in</button>
+        <form onSubmit={handleLogin}>
+          <input value={username} onChange={(e)=>setUsername(e.target.value)} placeholder='Enter username' required/>
+          <input type='password' value={password} onChange={(e)=>setPassword(e.target.value)} placeholder='Enter Password' required/>
+          <button type='submit'>log in</button>
+        </form>
         <Link to='/register'>Not Registered? Sign up</Link>
       </div>
     </div>

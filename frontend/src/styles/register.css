@@ -58,6 +58,11 @@
   color: #0388fc;
 }
 
+.register-background .register form{
+  display: flex;
+  flex-direction: column;
+}
+
 /* #p-name{
   color: #222936;
 } */

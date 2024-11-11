@@ -9,6 +9,7 @@ import '../styles/taskcontainer.css';
 import axios from 'axios';
 import { ThemeContext } from "../context/themeContext";
 import Auth from '../services/auth';
+import TaskService from '../services/tasks';
 
 //create a dummy task todo
 const dummy : Task = {
@@ -32,82 +33,54 @@ const TaskContainer: React.FC = () => {
 
   useEffect(()=>{
     const fetch_tasks = async ()  => {
-      try {
-        let response = await axios.get('http://localhost:2000/tasks');
-        if (response.status === 200){
-          setTasks(response.data.data);
+        const fetched = await TaskService.fetchTasks();
+
+        if(fetched !== null){
+          setTasks(fetched);
         }else{
-          setTasks([]);
+          alert('An error occured trying to fetch tasks');
         }
-      } catch (error) {
-        console.log(error);
-        alert('Could not fetch tasks');
-      }
     }
 
     fetch_tasks();
   },[]);
 
+  //function to handdle adding of new tasks
   const handleAddTask = async (newTask: Task) => {
-    //first make the call to add task in the back
-    try {
-      const response = await axios.post('http://localhost:2000/tasks/task', newTask);
-      if(response.data.data){
-        newTask = response.data.data;
-        //and then effect it in the frontend
-        setTasks(prevTasks => [...prevTasks, newTask]); // Add the new task to the list
-        alert('task added successfully')
-      }else{
-        throw new Error("database error");
-
-      }
-
-    } catch (error) {
-      console.log(error);
-      alert('Could not add task');
+    const added = await TaskService.addTask(newTask);
+    if(added){
+      setTasks((prevTasks) => ({...prevTasks, ...newTask}));
+    }else if(added === null){
+      alert('An error occured trying to add task');
+    }else{
+      alert('Same task already exists')
     }
-
   };
 
+ //set up screen to edit tasks
   const setUpEdit = (task: Task) =>{
     setPrevTask(task);
     setEditVisibility(true);
   }
 
+//function to edit tasks
   const handleEditTask = async (task: Task) => {
-    //first make the api call to make changes to the back
-    try {
-      const response = await axios.put(`http://localhost:2000/tasks/task/${task.id}`, task);
-
-      if(response.data.data.rowCount){
-        setTasks(prevTasks => prevTasks.filter(old_task => old_task.id !== task.id));
-        setTasks(prevTasks => [...prevTasks, task]);
-        alert(response.data.message);
-      }else{
-        throw new Error('database error');
-      }
-
-    } catch (error) {
-      console.log(error);
-      alert('Could not edit task')
+    const edited = await TaskService.editTask(task);
+    if(edited){
+      setTasks(prevTasks => prevTasks.filter(ptask => ptask.id !== task.id));
+      setTasks(prevTasks => ({...prevTasks, ...edited}));
     }
   }
 
+//function to delete tasks
   const deleteTask = async (taskId: number) => {
-    //make call to make changes in the back
-    try {
-      let response = await axios.delete(`http://localhost:2000/tasks/task/${taskId}`)
-
-      //effect change in the front when everything is successful
-      if(response.data.data.rowCount){
-        setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
-        alert(response.data.message);
-      }else{
-        throw new Error('database error');
-      }
-    } catch (error) {
-      console.log(error);
-      alert('Could not delete task');
+    const deleted = await TaskService.deleteTask(taskId);
+    if(deleted){
+      setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
+    }else if(null){
+      alert('An error occured trying to delete tasks');
+    }else{
+      alert('Task not existence');
     }
   };
 
@@ -115,8 +88,11 @@ const TaskContainer: React.FC = () => {
   //function to log out
   const handleLogOut = async () =>{
     //call auth service to carry out the operation
-    Auth.logout();
-    navigate('/login');
+    const loggedOut = await Auth.logout();
+    if(loggedOut){
+      Auth.logout();
+      navigate('/login');
+    }
   }
 
   return (
