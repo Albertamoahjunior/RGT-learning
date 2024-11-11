@@ -1,10 +1,10 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {FaTrash, FaCheckCircle, FaClock, FaCog} from 'react-icons/fa'
 import {Task} from '../models/task';
 import '../styles/tasktab.css';
-import axios from 'axios';
 import { ThemeContext } from "../context/themeContext";
 import { format, parseISO } from 'date-fns';
+import TaskService from '../services/tasks';
 
 interface taskProps {
   task: Task;
@@ -17,32 +17,30 @@ const TaskTab :React.FC<taskProps>= (props) =>{
 
   let {theme, changeTheme} = useContext(ThemeContext);
 
+
   const mark = async () =>{
-      setComplete(!complete);
-    try {
+    //take the state of completeness and then switch them
       if(complete) {
-        let response = await axios.patch(`http://localhost:2000/tasks/task/${props.task.id}/unfinish`);
-        if(response.data.data.rowCount){
-          alert(response.data.message);
-        }else{
+        let unfinish = await TaskService.completeTask(props.task.id);
+        if(unfinish){
           setComplete(!complete);
-          throw new Error('database error');
-          alert('could not mark task');
+          alert('task marked as undone')
+        }else if(null){
+          alert('error occured while marking task');
+        }else{
+          alert('task does not exist')
         }
       }else{
-        let response = await axios.patch(`http://localhost:2000/tasks/task/${props.task.id}/complete`);
-        if(response.data.data.rowCount){
-          alert(response.data.message);
-        }else{
+        let complete = await TaskService.unfinishTask(props.task.id);
+        if(complete){
           setComplete(!complete);
-          throw new Error('database error');
-          alert('could not mark task');
+          alert('task marked as done')
+        }else if(null){
+          alert('error occured while marking task');
+        }else{
+          alert('task does not exist')
         }
       }
-    } catch (error) {
-      console.log(error);
-      alert('error could not mark');
-    }
   }
 
 

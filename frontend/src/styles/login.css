@@ -1,0 +1,64 @@
+.login-background{
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background-color: #f3f3f3;
+  box-sizing: border-box;
+}
+
+.login-background .login{
+  background-color: #0000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 70%;
+  width: 30%;
+  border-radius: 1rem;
+  box-sizing: border-box;
+  background-color: #0000;
+  padding-top: 4rem;
+}
+
+.login-background h3{
+  font-size: 4rem;
+}
+
+.login-background h4{
+  font-size: 3rem;
+  margin: 0;
+}
+
+.login-background .login input, button{
+  border: 0;
+  border-radius: 0.7rem;
+  width: 30rem;
+  height: 4rem;
+  margin-bottom: 1rem;
+}
+
+.login-background .login button{
+  font-size: 2rem;
+  font-weight: 500;
+}
+
+.login-background .login input:focus{
+  border: 0.1rem solid #0388fc;
+  outline: 0.1rem solid #0388fc;
+}
+
+.login-background .login a{
+  text-decoration: none;
+  color: #0388fc;
+}
+
+.login-background .login form{
+  display: flex;
+  flex-direction: column;
+}
