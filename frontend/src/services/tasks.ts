@@ -5,8 +5,6 @@ const API_SERVICE = process.env.REACT_APP_API_URL;
 
 //fetch all tasks
 const fetchTasks = async () =>{
-
-  console.log(process.env.REACT_APP_API_URL)
   try {
     let response = await axios.get(`http://${API_SERVICE}/tasks`);
     if (response.status === 200){
@@ -70,13 +68,31 @@ const deleteTask = async (taskId : number) =>{
 }
 
 //complete task
-const completeTask = async () =>{
-
+const completeTask = async (taskId: number) =>{
+  try {
+    let response = await axios.patch(`http://${API_SERVICE}/tasks/task/${taskId}/unfinish`);
+    if(response.data.data.rowCount){
+      return true;
+    }else{
+      return false;
+    }
+  } catch (error) {
+      return null;
+  }
 }
 
 //mark as unfinished
-const unfinishTask = async () =>{
-
+const unfinishTask = async (taskId : number) =>{
+  try {
+    let response = await axios.patch(`http://${API_SERVICE}/tasks/task/${taskId}/complete`);
+    if(response.data.data.rowCount){
+      return true;
+    }else{
+      return false;
+    }
+  } catch (error) {
+      return null;
+  }
 }
 
 const taskService = {

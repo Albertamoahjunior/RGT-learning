@@ -43,13 +43,13 @@ const TaskContainer: React.FC = () => {
     }
 
     fetch_tasks();
-  },[]);
+  },[tasks]);
 
   //function to handdle adding of new tasks
   const handleAddTask = async (newTask: Task) => {
     const added = await TaskService.addTask(newTask);
     if(added){
-      setTasks((prevTasks) => ({...prevTasks, ...newTask}));
+      setTasks((prevTasks) => ({...prevTasks, ...added}));
     }else if(added === null){
       alert('An error occured trying to add task');
     }else{
