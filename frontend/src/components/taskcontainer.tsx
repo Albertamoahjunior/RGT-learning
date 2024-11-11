@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
-import {FaPlus} from 'react-icons/fa';
+import { useNavigate } from "react-router-dom";
+import {FaPlus, FaSignOutAlt} from 'react-icons/fa';
 import EditTask from "./edittask";
 import NewTask from './newtask';
 import { Task } from '../models/task';
 import TaskTab from './tasktab';
-import '../styles/taskcontainer.css'
+import '../styles/taskcontainer.css';
 import axios from 'axios';
 import { ThemeContext } from "../context/themeContext";
+import Auth from '../services/auth';
 
 //create a dummy task todo
 const dummy : Task = {
@@ -14,7 +16,7 @@ const dummy : Task = {
   title: 'dummy',
   task: 'dummy',
   date: new Date().toLocaleDateString(),
-  complete: false
+  complete: false,
 }
 
 const TaskContainer: React.FC = () => {
@@ -24,6 +26,7 @@ const TaskContainer: React.FC = () => {
   const [prevTask, setPrevTask] = useState<Task>(dummy);
 
   const {theme, changeTheme} = useContext(ThemeContext);
+  const navigate = useNavigate();
 
 
 
@@ -108,10 +111,18 @@ const TaskContainer: React.FC = () => {
     }
   };
 
+
+  //function to log out
+  const handleLogOut = async () =>{
+    //call auth service to carry out the operation
+    Auth.logout();
+    navigate('/login');
+  }
+
   return (
       <div className='task-container'>
 
-
+        <button className='log-out' onClick={handleLogOut} ><FaSignOutAlt/></button>
         <button className='switch-btn' onClick={changeTheme}
         style={{backgroundColor: theme === 'light' ? '#222936' : 'white',
         color: theme === 'light'? 'white' : 'black' }}>{theme === 'light'? 'dark' : 'light'}</button>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from 'react-router-dom';
 import '../styles/login.css';
+import Auth from '../services/auth';
 
 const Login: React.FC = () =>{
   const [username, setUsername] = useState<string>('');
@@ -10,8 +11,9 @@ const Login: React.FC = () =>{
   const navigate = useNavigate();
 
   const handleLogin = () =>{
-    console.log('logged in')
-    navigate('/home');
+    //make api call to login on the backend to get token
+    Auth.login();
+    navigate('/');
   }
 
   return(

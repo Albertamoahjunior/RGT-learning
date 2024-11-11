@@ -35,6 +35,15 @@
   padding: inherit;
 }
 
+.log-out{
+  font-size: 1.5rem;
+  border: 0;
+  margin-right: auto;
+  height: 3.5rem;
+  width: 5rem;
+  padding: inherit;
+}
+
 .content{
   display: flex;
   flex-direction: row;

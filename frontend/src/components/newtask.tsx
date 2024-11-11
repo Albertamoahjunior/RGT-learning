@@ -20,7 +20,7 @@ const NewTask: React.FC<NewTaskProps> = ({ onAddTask, isVisible, setVisible, tas
     task: task,
     date: new Date().toLocaleDateString(),
     id: taskNumber,
-    complete: false,
+    complete: false
   };
 
   const handleSubmit = () => {
