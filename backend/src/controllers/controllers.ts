@@ -13,7 +13,7 @@ async function get_all_tasks(req:Request, res:Response) :Promise<void>{
         let tasks: Task[] | undefined = await get_tasks(user_id);
 
         if(!tasks){
-          res.status(404).json({message: 'no tasks found', data: {}})
+          res.status(204).json({message: 'no tasks found', data: {}})
           return;
         }else{
           res.status(200).json({message: 'All tasks', data: tasks})
