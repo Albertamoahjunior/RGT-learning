@@ -1,16 +1,30 @@
 import axios from 'axios';
 import { Task } from '../models/task';
+import Auth from  './auth';
 
 const API_SERVICE = process.env.REACT_APP_API_URL;
 
 //fetch all tasks
-const fetchTasks = async () =>{
+const fetchTasks = async () :Promise<boolean | null | undefined | Task> =>{
   try {
     let response = await axios.get(`http://${API_SERVICE}/tasks`);
-    if (response.status === 200){
-      return response.data.data;
-    }else{
-      return;
+    //take care of the case where token is invalid or not available
+    switch (response.status) {
+      case 200:
+        return response.data.data as Task;
+      case 400:
+      case 401:
+          //logic to use refresh token
+          const refresh = await Auth.refresh();
+          if(refresh){
+            return await fetchTasks();
+          }else{
+            return undefined;
+          }
+
+      default:
+        return false;
+
     }
   } catch (error) {
     return null;
@@ -18,31 +32,56 @@ const fetchTasks = async () =>{
 }
 
 //add new tasks
-const addTask = async (task: Task) =>{
+const addTask = async (task: Task) :Promise<boolean | null | undefined | Task> =>{
   //first make the call to add task in the back
   try {
     const response = await axios.post(`http://${API_SERVICE}/tasks/task`, task);
-    if(response.data.data){
-      return response.data.data;
-    }else{
-      return false;
-    }
+    //take care of the case where token is invalid or not available
+    switch (response.status) {
+      case 200:
+        return response.data.data as Task;
+      case 400:
+      case 401:
+          //logic to use refresh token
+          const refresh = await Auth.refresh();
+          if(refresh){
+            return await addTask(task);
+          }else{
+            return undefined;
+          }
 
+      default:
+        return false;
+
+    }
   } catch (error) {
     return null;
   }
 }
 
 //edit task
-const editTask = async (task : Task) =>{
+const editTask = async (task : Task) :Promise<boolean | null | undefined | Task> =>{
   //first make the api call to make changes to the back
   try {
     const response = await axios.put(`http://${API_SERVICE}/tasks/task/${task.id}`, task);
 
-    if(response.data.data.rowCount){
-      return response.data.message;
-    }else{
-      return false;
+    //take care of the case where token is invalid or not available
+    switch (response.status) {
+      case 200:
+        return response.data.data as Task;
+      case 400:
+      case 401:
+          //logic to use refresh token
+          const refresh = await Auth.refresh();
+          if(refresh){
+            return await editTask(task);
+          }else{
+            return undefined;
+          }
+
+      default:
+        return false;
+
     }
 
   } catch (error) {
@@ -51,16 +90,27 @@ const editTask = async (task : Task) =>{
 }
 
 //delete task
-const deleteTask = async (taskId : number) =>{
+const deleteTask = async (taskId : number) :Promise<boolean | null | undefined> =>{
   //make call to make changes in the back
   try {
     let response = await axios.delete(`http://localhost:2000/tasks/task/${taskId}`)
 
-    //effect change in the front when everything is successful
-    if(response.data.data.rowCount){
-      return true;
-    }else{
-      return false;
+    //take care of the case where token is invalid or not available
+    switch (response.status) {
+      case 200:
+        return response.data.data.rowCount ? true : false;
+      case 400:
+      case 401:
+          //logic to use refresh token
+          const refresh = await Auth.refresh();
+          if(refresh){
+            return await deleteTask(taskId);
+          }else{
+            return undefined;
+          }
+
+      default:
+        return false;
     }
   } catch (error) {
     return null;
@@ -68,13 +118,27 @@ const deleteTask = async (taskId : number) =>{
 }
 
 //complete task
-const completeTask = async (taskId: number) =>{
+const completeTask = async (taskId: number) :Promise<boolean | null | undefined> =>{
   try {
     let response = await axios.patch(`http://${API_SERVICE}/tasks/task/${taskId}/unfinish`);
-    if(response.data.data.rowCount){
-      return true;
-    }else{
-      return false;
+
+    //take care of the case where token is invalid or not available
+    switch (response.status) {
+      case 200:
+        return response.data.data.rowCount ? true : false;
+
+      case 400:
+      case 401:
+        //logic to use refresh token
+        const refresh = await Auth.refresh();
+        if(refresh){
+          return await completeTask(taskId);
+        }else{
+          return undefined;
+        }
+
+      default:
+        return false;
     }
   } catch (error) {
       return null;
@@ -82,13 +146,26 @@ const completeTask = async (taskId: number) =>{
 }
 
 //mark as unfinished
-const unfinishTask = async (taskId : number) =>{
+const unfinishTask = async (taskId : number) :Promise<boolean | null | undefined> =>{
   try {
     let response = await axios.patch(`http://${API_SERVICE}/tasks/task/${taskId}/complete`);
-    if(response.data.data.rowCount){
-      return true;
-    }else{
-      return false;
+    //take care of the case where token is invalid or not available
+    switch (response.status) {
+      case 200:
+        return response.data.data.rowCount ? true : false;
+        
+      case 400:
+      case 401:
+          //logic to use refresh token
+          const refresh = await Auth.refresh();
+          if(refresh){
+            return await unfinishTask(taskId);
+          }else{
+            return undefined;
+          }
+
+      default:
+        return false;
     }
   } catch (error) {
       return null;

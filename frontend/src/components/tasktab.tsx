@@ -1,4 +1,4 @@
-import React, {useState, useContext, useEffect} from 'react';
+import React, {useState, useContext} from 'react';
 import {FaTrash, FaCheckCircle, FaClock, FaCog} from 'react-icons/fa'
 import {Task} from '../models/task';
 import '../styles/tasktab.css';
@@ -18,30 +18,23 @@ const TaskTab :React.FC<taskProps>= (props) =>{
   let {theme, changeTheme} = useContext(ThemeContext);
 
 
-  const mark = async () =>{
-    //take the state of completeness and then switch them
-      if(complete) {
-        let unfinish = await TaskService.completeTask(props.task.id);
-        if(unfinish){
-          setComplete(!complete);
-          alert('task marked as undone')
-        }else if(null){
-          alert('error occured while marking task');
-        }else{
-          alert('task does not exist')
-        }
-      }else{
-        let complete = await TaskService.unfinishTask(props.task.id);
-        if(complete){
-          setComplete(!complete);
-          alert('task marked as done')
-        }else if(null){
-          alert('error occured while marking task');
-        }else{
-          alert('task does not exist')
-        }
+  const mark = async () => {
+    try {
+      let updatedComplete = complete
+        ? await TaskService.completeTask(props.task.id)  // Undo complete
+        : await TaskService.unfinishTask(props.task.id); // Mark as complete
+
+
+      if (updatedComplete !== null) {
+        setComplete(!complete);  // Toggle the state only if operation was successful
+        alert(`task marked as ${complete ? 'undone' : 'done'}`);
+      } else {
+        alert('task does not exist');
       }
-  }
+    } catch (error) {
+      alert('An error occurred while marking the task');
+    }
+  };
 
 
   return(

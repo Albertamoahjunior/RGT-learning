@@ -6,7 +6,6 @@ import NewTask from './newtask';
 import { Task } from '../models/task';
 import TaskTab from './tasktab';
 import '../styles/taskcontainer.css';
-import axios from 'axios';
 import { ThemeContext } from "../context/themeContext";
 import Auth from '../services/auth';
 import TaskService from '../services/tasks';
@@ -29,15 +28,27 @@ const TaskContainer: React.FC = () => {
   const {theme, changeTheme} = useContext(ThemeContext);
   const navigate = useNavigate();
 
-
+  //function to log out
+  const handleLogOut = async () =>{
+    //call auth service to carry out the operation
+    const loggedOut = await Auth.logout();
+    if(loggedOut){
+      Auth.logout();
+      navigate('/login');
+    }
+  }
 
   useEffect(()=>{
     const fetch_tasks = async ()  => {
         const fetched = await TaskService.fetchTasks();
 
-        if(fetched !== null){
-          setTasks(fetched);
-        }else{
+        if(fetched){
+          setTasks(fetched as any);
+        }else if(fetched === undefined){
+          alert('Session expired please login again');
+          handleLogOut();
+        }
+        else{
           alert('An error occured trying to fetch tasks');
         }
     }
@@ -49,11 +60,15 @@ const TaskContainer: React.FC = () => {
   const handleAddTask = async (newTask: Task) => {
     const added = await TaskService.addTask(newTask);
     if(added){
-      setTasks((prevTasks) => ({...prevTasks, ...added}));
+      setTasks((prevTasks) => ({...prevTasks, ...added as Task}));
     }else if(added === null){
       alert('An error occured trying to add task');
-    }else{
-      alert('Same task already exists')
+    }else if(added === undefined){
+      alert('Session expired please login again');
+      handleLogOut();
+    }
+    else{
+      alert('Same task already exists');
     }
   };
 
@@ -68,7 +83,12 @@ const TaskContainer: React.FC = () => {
     const edited = await TaskService.editTask(task);
     if(edited){
       setTasks(prevTasks => prevTasks.filter(ptask => ptask.id !== task.id));
-      setTasks(prevTasks => ({...prevTasks, ...edited}));
+      setTasks(prevTasks => ({...prevTasks, ...edited as Task}));
+    }else if(edited === undefined){
+      alert('Session expired please login again');
+      handleLogOut();
+    }else{
+      alert('Error occured while trying to edit task');
     }
   }
 
@@ -77,23 +97,17 @@ const TaskContainer: React.FC = () => {
     const deleted = await TaskService.deleteTask(taskId);
     if(deleted){
       setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
-    }else if(null){
+    }else if( deleted === null){
       alert('An error occured trying to delete tasks');
-    }else{
+    }else if(deleted === undefined){
+      alert('Session expired please login again');
+      handleLogOut();
+    }
+    else{
       alert('Task not existence');
     }
   };
 
-
-  //function to log out
-  const handleLogOut = async () =>{
-    //call auth service to carry out the operation
-    const loggedOut = await Auth.logout();
-    if(loggedOut){
-      Auth.logout();
-      navigate('/login');
-    }
-  }
 
   return (
       <div className='task-container'>

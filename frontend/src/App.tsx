@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import logo from './logo.svg';
 import './App.css';
 import TaskContainer from './components/taskcontainer';
 import RegisterUser from './components/RegisterUser';
