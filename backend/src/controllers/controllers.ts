@@ -11,27 +11,15 @@ async function get_all_tasks(req:Request, res:Response) :Promise<void>{
   if(user_id){
     try {
         let tasks: Task[] | undefined = await get_tasks(user_id);
-<<<<<<< HEAD
+
 
         if(!tasks){
-          res.status(204).json({message: 'no tasks found', data: {}})
+          res.status(200).json({message: 'no tasks found', data: []})
           return;
         }else{
           res.status(200).json({message: 'All tasks', data: tasks})
           return;
         }
-=======
-        res.status(200).json({message: 'All tasks', data: tasks || []})
-        return;
-        // if(!tasks){
-        //   res.status(404).json({message: 'no tasks found', data: {}})
-        //   return;
-        // }else{
-        //   res.status(200).json({message: 'All tasks', data: tasks})
-        //   return;
-        // }
->>>>>>> 2e8ca1b86786ce25d210af52ac2399c16cfcaf84
-
     } catch (error) {
       console.log(error);
       res.status(500).json({message:'server error', data: error});
