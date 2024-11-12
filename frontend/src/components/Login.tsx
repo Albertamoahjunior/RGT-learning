@@ -12,19 +12,25 @@ const Login: React.FC = () =>{
 
   const handleLogin = async () =>{
     //make api call to login on the backend to get token
-    const logged = await Auth.login();
+    fetch('http://localhost:2000/tasks')
+    .then((response)=>{
+    console.log(response.status);
+    })
 
-    switch (logged) {
-      case true:
-        navigate('/');
-        break;
-      case false:
-        alert('wrong credentials');
-        break;
-      default:
-        alert('An error occured while trying to login')
-        break;
-    }
+
+    // const logged = await Auth.login(username, password);
+    // //console.log(logged);
+    // switch (logged) {
+    //   case true:
+    //     navigate('/');
+    //     break;
+    //   case false:
+    //     alert('wrong credentials');
+    //     break;
+    //   default:
+    //     alert('An error occured while trying to login')
+    //     break;
+    // }
 
   }
 

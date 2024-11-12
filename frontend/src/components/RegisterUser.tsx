@@ -15,8 +15,8 @@ const RegisterUser: React.FC = () =>{
       alert('Passwords are not the same');
     }else{
 
-      const registered = await Auth.register();
-      
+      const registered = await Auth.register(username, password);
+
       switch (registered) {
         case true:
           navigate('/');

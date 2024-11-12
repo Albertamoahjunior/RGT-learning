@@ -1,26 +1,41 @@
-//import axios from 'axios';
+import axios from 'axios';
 import Cookies from 'js-cookie';
 
 
 const refreshToken: string | undefined = Cookies.get('refreshToken');
+const API_SERVICE = process.env.REACT_APP_API_URL;
 
 // Define types for the API methods
 type ApiService = {
-  login: () => Promise<boolean | null>;
-  register: () => Promise<boolean | null>;
-  logout: () => Promise<boolean | null>;
-  refresh: () => Promise<boolean | null | undefined>;
+  login: (username: string, password: string) => Promise<any>;
+  register: (username: string, password: string) => Promise<any>;
+  logout: () => Promise<any>;
+  refresh: () => Promise<any>;
 };
 
 // API service to Login
-const login: ApiService['login'] = async () => {
-  // Make API calls
+const login: ApiService['login'] = async (username: string, password: string) => {
+
+  const user = {
+    username : username,
+    password : password
+  }
+
+
   try {
-    // Then store the values
-    localStorage.setItem('tasker-access-token', 'abcd');
-    localStorage.setItem('user-id', '1');
-    localStorage.setItem('username', 'albert');
-    return true;
+    // Make API calls
+    const response = await axios.post(`http://${API_SERVICE}/login`, user);
+
+    if(response.status === 200){
+      // Then store the values
+      localStorage.setItem('tasker-access-token', response.data.data.token);
+      localStorage.setItem('user-id', response.data.data.id);
+      localStorage.setItem('username', response.data.data.username);
+
+      return true;
+    }else{
+      return false;
+    }
   } catch (error) {
     return null;
   }
@@ -28,14 +43,26 @@ const login: ApiService['login'] = async () => {
 };
 
 // API service to sign up
-const register: ApiService['register'] = async () => {
-  // Make API calls
+const register: ApiService['register'] = async (username: string, password: string) => {
+
+  const user = {
+    username : username,
+    password : password
+  }
+
   try {
-    // Then store the values
-    localStorage.setItem('tasker-access-token', 'abcd');
-    localStorage.setItem('user-id', '1');
-    localStorage.setItem('username', 'albert');
-    return true;
+    // Make API calls
+    const response =  await axios.post(`http://${API_SERVICE}/register`, user);
+    if(response.status === 200){
+      // Then store the values
+      localStorage.setItem('tasker-access-token', response.data.data.token);
+      localStorage.setItem('user-id', response.data.data.id);
+      localStorage.setItem('username', response.data.data.username);
+
+      return true;
+    }else{
+      return false;
+    }
   } catch (error) {
     return null;
   }
@@ -44,13 +71,17 @@ const register: ApiService['register'] = async () => {
 
 // API service to log out
 const logout: ApiService['logout'] = async () => {
-  // Make API calls
+
   try {
-    // Then remove the values
-    localStorage.removeItem('tasker-access-token');
-    localStorage.removeItem('user-id');
-    localStorage.removeItem('username');
-    return true;
+    // Make API calls
+    const response =  await axios.get(`http://${API_SERVICE}/logout`);
+    if(response.status === 200){
+      // Then remove the values
+      localStorage.removeItem('tasker-access-token');
+      localStorage.removeItem('user-id');
+      localStorage.removeItem('username');
+      return true;
+  }
   } catch (error) {
     return null;
   }
@@ -58,16 +89,22 @@ const logout: ApiService['logout'] = async () => {
 
 // API service to refresh token
 const refresh: ApiService['refresh'] = async () => {
-  // Make API calls
   try {
     if(!refreshToken){
       return undefined; //this is to alert which ever function that called to redirect to the login page
     }else{
-      // Then store the values
-      localStorage.setItem('tasker-access-token', 'abcd');
-      localStorage.setItem('user-id', '1');
-      localStorage.setItem('username', 'albert');
-      return true;
+        // Make API calls
+        const response =  await axios.get(`http://${API_SERVICE}/refresh_token`);
+        if(response.status === 200){
+          // Then store the values
+          localStorage.setItem('tasker-access-token', response.data.data.token);
+          localStorage.setItem('user-id', response.data.data.id);
+          localStorage.setItem('username', response.data.data.username);
+
+          return true;
+        }else{
+          return false;
+        }
     }
   } catch (error) {
     return null;
