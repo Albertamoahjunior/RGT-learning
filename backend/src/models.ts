@@ -4,4 +4,11 @@ export interface Task{
   task: string;
   date: string;
   complete: boolean;
+  user_id: number;
+}
+
+export interface User{
+  id: number;
+  username: string;
+  password: string;
 }
