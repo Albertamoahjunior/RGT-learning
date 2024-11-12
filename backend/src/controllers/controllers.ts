@@ -12,14 +12,9 @@ async function get_all_tasks(req:Request, res:Response) :Promise<void>{
     try {
         let tasks: Task[] | undefined = await get_tasks(user_id);
 
+        res.status(200).json({message: 'All tasks', data: tasks?? []});
+        return;
 
-        if(!tasks){
-          res.status(200).json({message: 'no tasks found', data: []})
-          return;
-        }else{
-          res.status(200).json({message: 'All tasks', data: tasks})
-          return;
-        }
     } catch (error) {
       console.log(error);
       res.status(500).json({message:'server error', data: error});
