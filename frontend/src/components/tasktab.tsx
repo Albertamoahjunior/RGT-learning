@@ -1,5 +1,5 @@
 import React, {useState, useContext} from 'react';
-import {FaTrash, FaCheckCircle, FaClock, FaCog} from 'react-icons/fa'
+import {FaTrash, FaCheckCircle, FaClock, FaEdit} from 'react-icons/fa'
 import {Task} from '../models/task';
 import '../styles/tasktab.css';
 import { ThemeContext } from "../context/themeContext";
@@ -42,7 +42,7 @@ const TaskTab :React.FC<taskProps>= (props) =>{
 
   return(
     <div className='task-tab' style={{color: theme === 'light' ? 'black' : 'black'}}>
-      <button onClick={()=> props.onEdit(props.task)} className='edit-button'> <FaCog/> </button>
+      <button onClick={()=> props.onEdit(props.task)} className='edit-button'> <FaEdit/> </button>
       <h3>{props.task.title}</h3>
       <div className='desc-area'>
         <p>{props.task.task}</p>
