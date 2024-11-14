@@ -4,4 +4,5 @@ export interface Task{
   task: string;
   date: string;
   complete: boolean;
+  user_id: string;
 }

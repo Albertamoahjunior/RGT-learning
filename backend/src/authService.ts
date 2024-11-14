@@ -14,27 +14,27 @@ const check_pass = async (password: string, userpass: string): Promise<boolean> 
 }
 
 //generate access token
-const generate_access_token = (username: string): string | null => {
+const generate_access_token = (username: string, userId: number): string | null => {
   const accessSecret = process.env.JWT_ACCESS_SECRET as Secret;
   if (!accessSecret) {
     console.error("JWT_ACCESS_SECRET is not defined");
     return null;
   }
 
-  return jwt.sign({ username }, accessSecret, {
+  return jwt.sign({ username, userId }, accessSecret, {
     expiresIn: process.env.JWT_ACCESS_EXPIRATION,
   });
 }
 
 //generate refresh token
-const generate_refresh_token = (username: string): string | null => {
+const generate_refresh_token = (username: string, userId: number): string | null => {
   const refreshSecret = process.env.JWT_REFRESH_SECRET as Secret;
   if (!refreshSecret) {
     console.error("JWT_REFRESH_SECRET is not defined");
     return null;
   }
 
-  return jwt.sign({ username }, refreshSecret, {
+  return jwt.sign({ username, userId }, refreshSecret, {
     expiresIn: process.env.JWT_REFRESH_EXPIRATION,
   });
 }

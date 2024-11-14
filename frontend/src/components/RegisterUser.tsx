@@ -9,7 +9,8 @@ const RegisterUser: React.FC = () =>{
   const [cpassword, setCpassword] = useState<string>('');
 
   const navigate = useNavigate();
-  const handleRegister = async () =>{
+  const handleRegister = async (e: React.FormEvent) =>{
+    e.preventDefault();
     //make api call to register on the backend to get token
     if(password !== cpassword){
       alert('Passwords are not the same');
@@ -17,8 +18,11 @@ const RegisterUser: React.FC = () =>{
 
       const registered = await Auth.register(username, password);
 
-      switch (registered) {
+      switch (registered.state) {
         case true:
+          localStorage.setItem('tasker-access-token', registered.token ?? '');
+          localStorage.setItem('user-id', registered.userId ?? '');
+          localStorage.setItem('username', registered.username ?? '');
           navigate('/');
           break;
         case false:

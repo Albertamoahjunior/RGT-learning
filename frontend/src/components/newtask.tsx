@@ -14,23 +14,32 @@ const NewTask: React.FC<NewTaskProps> = ({ onAddTask, isVisible, setVisible, tas
   const [title, setTitle] = useState<string>('');
   const [task, setTask] = useState<string>('');
 
-  // Create the new_task object
-  const new_task: Task = {
-    title: title,
-    task: task,
-    date: new Date().toLocaleDateString(),
-    id: taskNumber,
-    complete: false
-  };
+  const userId = localStorage.getItem('user-id');
+
 
   const handleSubmit = () => {
-    if(title === ' ' || task === ''){
-      alert('empty fields');
+    if(userId !== null){
+      // Create the new_task object
+      const new_task: Task = {
+        title: title,
+        task: task,
+        date: new Date().toLocaleDateString(),
+        id: taskNumber,
+        complete: false,
+        user_id: userId
+      };
+
+      if(title === ' ' || task === ''){
+        alert('empty fields');
+      }else{
+        onAddTask(new_task); // Send the new_task to the parent component
+        setTitle(''); // Clear the input fields after submitting
+        setTask('');
+        setVisible(false);
+      }
+
     }else{
-      onAddTask(new_task); // Send the new_task to the parent component
-      setTitle(''); // Clear the input fields after submitting
-      setTask('');
-      setVisible(false);
+      alert('Critical information missing please try refreshing');
     }
   };
 

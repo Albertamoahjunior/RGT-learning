@@ -12,10 +12,14 @@
     "@types/node": "^16.18.115",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
+    "@typescript-eslint/eslint-plugin": "^8.14.0",
+    "@typescript-eslint/parser": "^8.14.0",
     "axios": "^1.7.7",
     "crypto-browserify": "^3.12.1",
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.5",
+    "eslint": "^8.57.1",
+    "eslint-plugin-react": "^7.37.2",
     "js-cookie": "^3.0.5",
     "os-browserify": "^0.3.0",
     "path-browserify": "^1.0.1",
@@ -31,7 +35,9 @@
     "start": "PORT=8000 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix"
   },
   "eslintConfig": {
     "extends": [

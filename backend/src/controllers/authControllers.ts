@@ -21,8 +21,8 @@ async function add_user(req: Request, res: Response): Promise<void> {
       const hashedPassword = await auth.hash_password(password);
       const new_user: User | undefined = await register(username, hashedPassword);
       if(new_user){
-        const access_token = await auth.generate_access_token(new_user.username);
-        const refresh_token = await auth.generate_refresh_token(new_user.username);
+        const access_token = await auth.generate_access_token(new_user.username, new_user.id);
+        const refresh_token = await auth.generate_refresh_token(new_user.username, new_user.id);
 
         // Set the refresh token in a secure cookie
          res.cookie('refreshToken', refresh_token, {
@@ -58,8 +58,8 @@ async function login(req: Request, res: Response): Promise<void> {
       const user: User | undefined = await get_user(username);
       if(user){
         if(await auth.check_pass(password, user.password)){
-          const access_token = await auth.generate_access_token(user.username);
-          const refresh_token = await auth.generate_refresh_token(user.username);
+          const access_token = await auth.generate_access_token(user.username, user.id);
+          const refresh_token = await auth.generate_refresh_token(user.username, user.id);
 
           // Set the refresh token in a secure cookie
            res.cookie('refreshToken', refresh_token, {
@@ -107,9 +107,9 @@ async function refresh_token(req: Request, res: Response) :Promise<void> {
 
       if(verified){
         //send the access token to the client directly
-        const access_token = await auth.generate_access_token(verified.username);
+        const access_token = await auth.generate_access_token(verified.username, verified.id);
         res.status(200).json({ message: 'token refreshed successfully', data:
-        { id: verified.id, username: verified.username, token: access_token} });
+        { id: verified.userId, username: verified.username, token: access_token} });
       }else{
         res.status(400).json({message: 'invalid token'});
       }
@@ -133,7 +133,7 @@ async function authenticate(req: AuthenticatedRequest, res: Response, next: Next
       req.user = verified;
       next();
     }else{
-      res.status(400).json({message: 'invalid token'})
+      res.status(401).json({message: 'invalid token'})
     }
   }else{
     res.status(401).json({message: 'no token found'});

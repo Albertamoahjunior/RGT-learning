@@ -1,189 +1,133 @@
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import { Task } from '../models/task';
-import Auth from  './auth';
+import Auth from './auth';
+import { useAuthContext } from '../context/authContext';
 
 const API_SERVICE = process.env.REACT_APP_API_URL;
-const OPTIONS = {
-  headers:{
-    'Authorization': localStorage.getItem('tasker-access-token')
-  }
-}
 
-//fetch all tasks
-const fetchTasks = async () :Promise<boolean | null | undefined | Task> =>{
-  try {
-    let response = await axios.get(`http://${API_SERVICE}/tasks`, OPTIONS);
-    //take care of the case where token is invalid or not available
-    switch (response.status) {
-      case 200:
-        return response.data.data as Task;
-      case 400:
-      case 401:
-          //logic to use refresh token
-          const refresh = await Auth.refresh();
-          if(refresh){
-            return await fetchTasks();
-          }else{
-            return undefined;
-          }
+const useTaskService = () => {
+  const { authParcel, setAuthParcel } = useAuthContext();
 
-      default:
-        return false;
+  // Axios instance
+  const axiosInstance = axios.create({
+    baseURL: `http://${API_SERVICE}`,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
 
-    }
-  } catch (error) {
-    return null;
-  }
-}
+  // Interceptor for handling token refreshing
+  axiosInstance.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+      const originalRequest = error.config;
 
-//add new tasks
-const addTask = async (task: Task) :Promise<boolean | null | undefined | Task> =>{
-  //first make the call to add task in the back
-  try {
-    const response = await axios.post(`http://${API_SERVICE}/tasks/task`, task, OPTIONS);
-    //take care of the case where token is invalid or not available
-    switch (response.status) {
-      case 200:
-        return response.data.data as Task;
-      case 400:
-      case 401:
-          //logic to use refresh token
-          const refresh = await Auth.refresh();
-          if(refresh){
-            return await addTask(task);
-          }else{
-            return undefined;
-          }
+      if (error.response && error.response.status === 401 && !originalRequest._retry) {
+        originalRequest._retry = true; // prevent retry loop
 
-      default:
-        return false;
-
-    }
-  } catch (error) {
-    return null;
-  }
-}
-
-//edit task
-const editTask = async (task : Task) :Promise<boolean | null | undefined | Task> =>{
-  //first make the api call to make changes to the back
-  try {
-    const response = await axios.put(`http://${API_SERVICE}/tasks/task/${task.id}`, task, OPTIONS);
-
-    //take care of the case where token is invalid or not available
-    switch (response.status) {
-      case 200:
-        return response.data.data as Task;
-      case 400:
-      case 401:
-          //logic to use refresh token
-          const refresh = await Auth.refresh();
-          if(refresh){
-            return await editTask(task);
-          }else{
-            return undefined;
-          }
-
-      default:
-        return false;
-
-    }
-
-  } catch (error) {
-    return null
-  }
-}
-
-//delete task
-const deleteTask = async (taskId : number) :Promise<boolean | null | undefined> =>{
-  //make call to make changes in the back
-  try {
-    let response = await axios.delete(`http://localhost:2000/tasks/task/${taskId}`, OPTIONS)
-
-    //take care of the case where token is invalid or not available
-    switch (response.status) {
-      case 200:
-        return response.data.data.rowCount ? true : false;
-      case 400:
-      case 401:
-          //logic to use refresh token
-          const refresh = await Auth.refresh();
-          if(refresh){
-            return await deleteTask(taskId);
-          }else{
-            return undefined;
-          }
-
-      default:
-        return false;
-    }
-  } catch (error) {
-    return null;
-  }
-}
-
-//complete task
-const completeTask = async (taskId: number) :Promise<boolean | null | undefined> =>{
-  try {
-    let response = await axios.patch(`http://${API_SERVICE}/tasks/task/${taskId}/unfinish`, OPTIONS);
-
-    //take care of the case where token is invalid or not available
-    switch (response.status) {
-      case 200:
-        return response.data.data.rowCount ? true : false;
-
-      case 400:
-      case 401:
-        //logic to use refresh token
+        // Attempt to refresh the token
         const refresh = await Auth.refresh();
-        if(refresh){
-          return await completeTask(taskId);
-        }else{
-          return undefined;
+        if (refresh && refresh.state) {
+          // Update token in context
+          setAuthParcel({
+            token: refresh.token ?? "",
+            user_id: refresh.userId ?? "",
+            username: refresh.username ?? "",
+          });
+
+          // Update original request with new token
+          originalRequest.headers['Authorization'] = refresh.token;
+          return axiosInstance(originalRequest); // Retry original request
         }
+      }
 
-      default:
-        return false;
+      return Promise.reject(error); // Return any other errors
     }
-  } catch (error) {
+  );
+
+  // Helper function for setting auth headers
+  const setAuthHeader = (token: string): AxiosRequestConfig => ({
+    headers: {
+      'Authorization': token,
+    },
+    withCredentials: true,
+  });
+
+  // CRUD functions
+  const fetchTasks = async (): Promise<Task[] | null> => {
+    const { token, user_id } = authParcel;
+    if (!token || !user_id) return null;
+    try {
+      const response = await axiosInstance.get(`/tasks/${user_id}`, setAuthHeader(token));
+      return response.data.data;
+    } catch (error) {
       return null;
-  }
-}
-
-//mark as unfinished
-const unfinishTask = async (taskId : number) :Promise<boolean | null | undefined> =>{
-  try {
-    let response = await axios.patch(`http://${API_SERVICE}/tasks/task/${taskId}/complete`, OPTIONS);
-    //take care of the case where token is invalid or not available
-    switch (response.status) {
-      case 200:
-        return response.data.data.rowCount ? true : false;
-
-      case 400:
-      case 401:
-          //logic to use refresh token
-          const refresh = await Auth.refresh();
-          if(refresh){
-            return await unfinishTask(taskId);
-          }else{
-            return undefined;
-          }
-
-      default:
-        return false;
     }
-  } catch (error) {
+  };
+
+  const addTask = async (task: Task): Promise<Task | null> => {
+    const { token } = authParcel;
+    if (!token) return null;
+    try {
+      const response = await axiosInstance.post('/tasks/task', task, setAuthHeader(token));
+      return response.data.data;
+    } catch (error) {
       return null;
-  }
-}
+    }
+  };
 
-const taskService = {
-  fetchTasks,
-  addTask,
-  editTask,
-  deleteTask,
-  completeTask,
-  unfinishTask
-}
+  const editTask = async (task: Task): Promise<Task | null> => {
+    const { token } = authParcel;
+    if (!token) return null;
+    try {
+      const response = await axiosInstance.put(`/tasks/task/${task.id}`, task, setAuthHeader(token));
+      return response.data.data;
+    } catch (error) {
+      return null;
+    }
+  };
 
-export default taskService;
+  const deleteTask = async (taskId: number): Promise<boolean> => {
+    const { token, user_id } = authParcel;
+    if (!token || !user_id) return false;
+    try {
+      await axiosInstance.delete(`/tasks/task/${taskId}?user=${user_id}`, setAuthHeader(token));
+      return true;
+    } catch (error) {
+      return false;
+    }
+  };
+
+  const completeTask = async (taskId: number): Promise<boolean> => {
+    const { token, user_id } = authParcel;
+    if (!token || !user_id) return false;
+    try {
+      await axiosInstance.patch(`/tasks/task/${taskId}/unfinish?user=${user_id}`, undefined, setAuthHeader(token));
+      return true;
+    } catch (error) {
+      return false;
+    }
+  };
+
+  const unfinishTask = async (taskId: number): Promise<boolean> => {
+    const { token, user_id } = authParcel;
+    if (!token || !user_id) return false;
+    try {
+      await axiosInstance.patch(`/tasks/task/${taskId}/complete?user=${user_id}`, undefined, setAuthHeader(token));
+      return true;
+    } catch (error) {
+      return false;
+    }
+  };
+
+  return {
+    fetchTasks,
+    addTask,
+    editTask,
+    deleteTask,
+    completeTask,
+    unfinishTask,
+  };
+};
+
+export default useTaskService;

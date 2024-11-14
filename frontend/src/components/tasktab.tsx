@@ -4,7 +4,8 @@ import {Task} from '../models/task';
 import '../styles/tasktab.css';
 import { ThemeContext } from "../context/themeContext";
 import { format, parseISO } from 'date-fns';
-import TaskService from '../services/tasks';
+import useTaskService from '../services/tasks';
+import { useAuthContext } from "../context/authContext";
 
 interface taskProps {
   task: Task;
@@ -16,16 +17,18 @@ const TaskTab :React.FC<taskProps>= (props) =>{
   const [complete, setComplete] = useState<boolean>(props.task.complete);
 
   let {theme, changeTheme} = useContext(ThemeContext);
+  let { authParcel } = useAuthContext();
+  const {completeTask, unfinishTask} = useTaskService();
 
 
   const mark = async () => {
     try {
       let updatedComplete = complete
-        ? await TaskService.completeTask(props.task.id)  // Undo complete
-        : await TaskService.unfinishTask(props.task.id); // Mark as complete
+        ? await completeTask(props.task.id)  // Undo complete
+        : await unfinishTask(props.task.id); // Mark as complete
 
 
-      if (updatedComplete !== null) {
+      if (updatedComplete) {
         setComplete(!complete);  // Toggle the state only if operation was successful
         alert(`task marked as ${complete ? 'undone' : 'done'}`);
       } else {

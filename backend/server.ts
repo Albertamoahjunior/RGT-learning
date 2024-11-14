@@ -12,6 +12,7 @@ const corsOptions = {
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
 };
+
 //initialize the express app and port number
 const app = express();
 const PORT : number = 2000;
@@ -22,8 +23,8 @@ app.use(express.json());
 app.use(cookieParser());
 
 //insitialize routes to be used
-app.use('/tasks', router);
 app.use('/', authRouter);
+app.use('/tasks', router);
 
 //start the server and listen on port 2000
 app.listen(PORT, ()=>{
