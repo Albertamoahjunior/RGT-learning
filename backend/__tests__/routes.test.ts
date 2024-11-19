@@ -5,14 +5,13 @@ import pool from '../src/databaseConnection';
 describe('Routes', () =>{
 
   beforeAll(async () => {
-    // Set up test data
-    await pool.query('TRUNCATE TABLE users, task RESTART IDENTITY CASCADE');
+    // Start a transaction before each test
+    await pool.query('BEGIN');
   });
 
   afterAll(async () => {
-    // Clean up the database
-    //await pool.query('TRUNCATE TABLE users, task RESTART IDENTITY CASCADE');
-    await pool.end();
+    // Rollback the transaction after each test
+    await pool.query('ROLLBACK');
   });
 
   let refresh_token: string;
