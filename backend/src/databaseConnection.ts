@@ -106,7 +106,7 @@ async function createTables() {
 async function initDatabase() {
   await createDatabaseIfNotExists();
   await createTables();
-  console.log("Database setup completed.");
+  //console.log("Database setup completed.");
 }
 
 initDatabase()

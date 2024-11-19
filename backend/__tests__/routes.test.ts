@@ -1,8 +1,19 @@
 import app from '../app';
 import request from 'supertest';
-
+import pool from '../src/databaseConnection';
 
 describe('Routes', () =>{
+
+  beforeAll(async () => {
+    // Set up test data
+    await pool.query('TRUNCATE TABLE users, task RESTART IDENTITY CASCADE');
+  });
+
+  afterAll(async () => {
+    // Clean up the database
+    //await pool.query('TRUNCATE TABLE users, task RESTART IDENTITY CASCADE');
+    await pool.end();
+  });
 
   let refresh_token: string;
   let access_token: string;
@@ -149,7 +160,6 @@ describe('Routes', () =>{
 
     });
   });
-
 
 
 });
