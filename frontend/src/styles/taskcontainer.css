@@ -2,13 +2,47 @@
   position: absolute;
   display: flex;
   flex-direction: column;
-  top: 10%;
-  left: 10%;
-  height: 80%;
-  width: 80%;
+  top: 5%;
+  left: 5%;
+  height: 95%;
+  width: 90%;
   border: 0;
   background-color: #0000;
   overflow-y: hidden;
+}
+
+.top-most{
+  display: flex;
+  flex-direction: row;
+  padding: 0;
+  height: 4rem;
+}
+
+.top-most .profile{
+  display: flex;
+  flex-direction: row;
+  margin-left: auto;
+  margin-right: 0;
+  height: 2rem;
+  width: 30%;
+  border: 0;
+}
+
+.profile-button{
+  border-radius: 3rem;
+  width: 4rem;
+  height: 4rem;
+  background-color: #f3f3f3;
+  margin-left: 5%;
+}
+
+.top-most .profile p{
+  font-size: 2rem;
+  margin: 0;
+}
+
+.top-most .profile span{
+  font-size: 2rem;
 }
 
 .switch-btn{
@@ -35,7 +69,7 @@
   padding: inherit;
 }
 
-.log-out{
+.top-most .log-out{
   font-size: 1.5rem;
   border: 0;
   margin-right: auto;

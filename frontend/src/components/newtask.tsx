@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Task } from "../models/task";
 import '../styles/newtask.css';
+import { useAuthContext } from "../context/authContext";
+
 
 // Define the interface for  a call back function
 interface NewTaskProps {
@@ -13,12 +15,11 @@ interface NewTaskProps {
 const NewTask: React.FC<NewTaskProps> = ({ onAddTask, isVisible, setVisible, taskNumber }) => {
   const [title, setTitle] = useState<string>('');
   const [task, setTask] = useState<string>('');
-
-  const userId = localStorage.getItem('user-id');
+  const { authParcel, setAuthParcel } = useAuthContext();
 
 
   const handleSubmit = () => {
-    if(userId !== null){
+    if(authParcel.user_id !== null){
       // Create the new_task object
       const new_task: Task = {
         title: title,
@@ -26,7 +27,7 @@ const NewTask: React.FC<NewTaskProps> = ({ onAddTask, isVisible, setVisible, tas
         date: new Date().toLocaleDateString(),
         id: taskNumber,
         complete: false,
-        user_id: userId
+        user_id: authParcel.user_id,
       };
 
       if(title === ' ' || task === ''){

@@ -9,6 +9,7 @@ import '../styles/taskcontainer.css';
 import { ThemeContext } from "../context/themeContext";
 import Auth from '../services/auth';
 import useTaskService from '../services/tasks';
+import {useAuthContext} from '../context/authContext';
 
 
 
@@ -31,6 +32,7 @@ const TaskContainer: React.FC = () => {
 
   const {theme, changeTheme} = useContext(ThemeContext);
   let { fetchTasks, addTask, deleteTask, editTask } = useTaskService();
+  const {authParcel} = useAuthContext();
 
   const navigate = useNavigate();
 
@@ -41,7 +43,7 @@ const TaskContainer: React.FC = () => {
 
     const loggedOut = await Auth.logout();
     if(loggedOut){
-      localStorage.removeItem('tasker-access-token');
+      // localStorage.removeItem('tasker-access-token');
       Auth.logout();
       navigate('/login');
     }
@@ -113,10 +115,13 @@ const TaskContainer: React.FC = () => {
   return (
       <div className='task-container'>
 
-        <button className='log-out' onClick={handleLogOut} ><FaSignOutAlt/></button>
-        <button className='switch-btn' onClick={changeTheme}
+        <div className='top-most'>
+            <button className='log-out' onClick={handleLogOut} ><FaSignOutAlt/></button>
+            <div className='profile'><p><span>Welcome</span>, {authParcel.username}</p> <button className='profile-button'></button></div>
+        </div>
+        {/*}<button className='switch-btn' onClick={changeTheme}
         style={{backgroundColor: theme === 'light' ? '#222936' : 'white',
-        color: theme === 'light'? 'white' : 'black' }}>{theme === 'light'? 'dark' : 'light'}</button>
+        color: theme === 'light'? 'white' : 'black' }}>{theme === 'light'? 'dark' : 'light'}</button>*/}
           <div className='top-bar'>
             <h1>Tasks</h1>
             <button className='add-btn' onClick={()=> setVisibility(true)}><FaPlus/></button>

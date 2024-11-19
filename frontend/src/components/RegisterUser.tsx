@@ -2,11 +2,16 @@ import React, { useState } from "react";
 import { useNavigate, Link } from 'react-router-dom';
 import '../styles/register.css';
 import Auth from '../services/auth';
+import {useAuthContext} from '../context/authContext';
+
 
 const RegisterUser: React.FC = () =>{
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [cpassword, setCpassword] = useState<string>('');
+
+  const {authParcel, setAuthParcel} = useAuthContext();
+
 
   const navigate = useNavigate();
   const handleRegister = async (e: React.FormEvent) =>{
@@ -20,9 +25,14 @@ const RegisterUser: React.FC = () =>{
 
       switch (registered.state) {
         case true:
-          localStorage.setItem('tasker-access-token', registered.token ?? '');
-          localStorage.setItem('user-id', registered.userId ?? '');
-          localStorage.setItem('username', registered.username ?? '');
+        setAuthParcel(
+          {
+            token: registered.token ?? '',
+            user_id: registered.userId ?? '',
+            username: registered.username ?? ''
+          }
+        )
+
           navigate('/');
           break;
         case false:
