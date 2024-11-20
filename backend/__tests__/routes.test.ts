@@ -1,17 +1,18 @@
 import app from '../app';
 import request from 'supertest';
-import pool from '../src/databaseConnection';
+import { initTestDatabase } from '../src/databaseConnection';
 
 describe('Routes', () =>{
 
   beforeAll(async () => {
     // Start a transaction before each test
-    await pool.query('BEGIN');
+    await initTestDatabase();
+    //await pool.query('BEGIN');
   });
 
   afterAll(async () => {
     // Rollback the transaction after each test
-    await pool.query('ROLLBACK');
+    //await pool.query('ROLLBACK');
   });
 
   let refresh_token: string;

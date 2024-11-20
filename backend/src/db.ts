@@ -1,6 +1,6 @@
 import {QueryResult} from 'pg';
 import {Task, User} from './models';
-import pool from './databaseConnection'
+import {pool_sec as pool} from './databaseConnection'
 
 export async function register(username: string, password: string){
   try {
