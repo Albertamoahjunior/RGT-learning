@@ -1,4 +1,3 @@
-// index.ts
 import { Pool, Client } from 'pg';
 import dbConfig from '../dbconfig';
 
@@ -106,7 +105,7 @@ async function createTables() {
 async function initDatabase() {
   await createDatabaseIfNotExists();
   await createTables();
-  console.log("Database setup completed.");
+  //console.log("Database setup completed.");
 }
 
 initDatabase()
@@ -114,7 +113,11 @@ initDatabase()
   pool.end();
 });
 
+export const initTestDatabase = async () =>{
+  dbConfig.database= 'testdb';
+  await createDatabaseIfNotExists();
+  await createTables();
+}
 
-const pool_sec = new Pool(dbConfig);
 
-export default pool_sec;
+export const pool_sec = new Pool(dbConfig);

@@ -50,5 +50,6 @@
   },
   "include": [
       "src/**/*"
-  ]
+  ],
+  "types": ["jest"]
 }
